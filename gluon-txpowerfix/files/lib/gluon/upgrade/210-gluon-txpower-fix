@@ -31,11 +31,6 @@ if not interface24 then
 	os.exit(0) -- something went wrong
 end
 
---- check if txpower is already set. if so, we have nothing to do
-if uci:get('wireless', interface24, 'txpower') then
-	os.exit(0)
-end
-
 --- get maximum available power and step
 t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 1 | awk \'{print $1}\'')
 maximumTxPowerDb = string.gsub(t, "\n", "")
@@ -51,9 +46,20 @@ else
         maximumTxPower = tonumber(maximumTxPower)-1
 end
 
+
+--- determine HT-Mode direction 
+channel = uci:get('wireless', interface24, 'channel') 
+if channel == '13' then 
+	htMode = '40-'
+else
+	htMode = '40+'
+end 
+
 --- set values
+
 uci:set('wireless', interface24, 'country', 'BO')
 uci:set('wireless', interface24, 'txpower', maximumTxPower)
+uci:set('wireless', interface24, 'htmode', htMode)
 uci:save('wireless')
 uci:commit('wireless')
 
