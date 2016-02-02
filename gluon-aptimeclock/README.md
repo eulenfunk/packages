@@ -1,16 +1,20 @@
-gluon wifi neighbor check
+gluon ap switch toggle
 =========================
 
-this script looks for wifi mesh neighbors. 
-If at least 2 meshneibours are found once (after boot), the script is set into trigger mode. 
+this script will turn off the client AP network during nighttimes. 
+please set the UCI values accordingling for radio0 (usually 2,4GHz) and radio1 (usually 5GHz)
 
-then the absence of neighbors in the wifimesh will alert the node. and if the absence is still present the next minute, the node is rebootet. 
+Format: hhmm (0815 for 08h15 AM, 2045 for 8h45 PM)
 
-GLUON_SITE_FEEDS="weeklyreboot"<br>
-PACKAGES_WIFICHECK_REPO=https://github.com/eulenfunk/gluon-weeklyreboot.git<br>
-PACKAGES_WIFICHECK_COMMIT=<br>
-PACKAGES_WIFICHECK_BRANCH=master<br>
+example: 
+uci set wireless.client_radio0.clock_on=0815
+uci set wireless.client_radio0.clock_off=2045
+uci set wireless.client_radio1.clock_on=0730
+uci set wireless.client_radio1.clock_off=1935
 
-With this done you can add the package gluon-weeklyreboot to your site.mk
+GLUON_SITE_FEEDS="eulenfunk"<br>
+PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git<br>
+PACKAGES_EULENFUNK_COMMIT=<br>
+PACKAGES_EULENFUNK_BRANCH=master<br>
 
-This branch of the skript contains the weeklyreboot version for the current master based on openwrt chaos-calmer (upcoming 2016.1)
+With this done you can add the package *gluon-apitimeclock* to your site.mk
