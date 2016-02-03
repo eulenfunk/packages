@@ -1,3 +1,1 @@
-1,31 * * * * /lib/gluon/aptimeclock/aptimeclock.sh
-
-
+*/5 * * * * /lib/gluon/aptimeclock/aptimeclock.sh
