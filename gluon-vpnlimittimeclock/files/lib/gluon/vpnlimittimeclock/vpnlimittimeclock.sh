@@ -20,7 +20,8 @@ if [ $? -eq 0 ]; then
     vpnlimiton=$(uci get simple-tc.mesh_vpn.clock_on)
     vpnlimitoff=$(uci get simple-tc.mesh_vpn.clock_off)
     if ( [ ${#vpnlimiton} -eq 4 ] ) && ( [ ${#vpnlimitoff} -eq 4 ] ) ; then
-      if ( ( ( [ $vpnlimiton -le $vpnlimitoff ] ) && ( [ $CurrentTime -ge $vpnlimiton ] ) && ( [ $CurrentTime -le $vpnlimitoff ] ) ) || ( ( [ $vpnlimiton -ge $vpnlimitoff ] ) && ( [ $CurrentTime -ge $vpnlimiton ] ) || ( [ $CurrentTime -le $vpnlimitoff ] ) ) ) ; then
+      if ( ( ( [ $vpnlimiton -le $vpnlimitoff ] ) && ( ( [ $CurrentTime -ge $vpnlimiton ] ) && ( [ $CurrentTime -le $vpnlimitoff ] ) ) ) \
+        || ( ( [ $vpnlimiton -ge $vpnlimitoff ] ) && ( ( [ $CurrentTime -ge $vpnlimiton ] ) || ( [ $CurrentTime -le $vpnlimitoff ] ) ) ) ) ; then
         if [ $(uci get simple-tc.mesh_vpn.enabled) -eq 0 ] ; then
           uci set simple-tc.mesh_vpn.enabled=1
           echo "$(date):VPN-bandwidthlimit aktiviert" >> $logfile
