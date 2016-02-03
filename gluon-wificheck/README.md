@@ -10,7 +10,7 @@ Create a file "modules" with the following content in your ./gluon/site/ directo
 
 GLUON_SITE_FEEDS="eulenfunk"<br>
 PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git<br>
-PACKAGES_EULENFUNK_COMMIT=/missing/<br>
+PACKAGES_EULENFUNK_COMMIT=*/missing/*<br>
 PACKAGES_EULENFUNK_BRANCH=chaos-calmer<br>
 
 With this done you can add the package *gluon-wificheck* to your site.mk
