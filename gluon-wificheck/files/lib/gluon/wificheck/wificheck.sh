@@ -10,11 +10,11 @@ if [ -z "$mname" ] ; then
   neighbors=$(iw dev $mname scan|grep $bssid|wc -l)
   echo meshneighbours: $mesh adhocneighbors: $wmesh wifimeshneighbors: $neighbors
   if [ ! -f /tmp/noisland ] ; then
-    if [ "$neighbors" -gt 2 ] ; then #minimum 2 neighbors
+    if [ "$mesh" -gt 1 ] ; then #minimum 2 neighbors
       echo 1>/tmp/noisland
     fi
    else
-    if [ "$neighbors" -lt 2 ] ; then
+    if [ "$mesh" -lt 1 ] ; then # alone?
       if [ -f /tmp/wifipbflag ] ; then
         echo "still no wifi neighbors, rebooting"
         sleep 3
