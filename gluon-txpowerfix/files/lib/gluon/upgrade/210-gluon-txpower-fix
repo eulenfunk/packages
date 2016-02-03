@@ -50,9 +50,9 @@ end
 --- determine HT-Mode direction 
 channel = uci:get('wireless', interface24, 'channel') 
 if channel == '13' then 
-	htMode = '40-'
+	htMode = 'HT40-'
 else
-	htMode = '40+'
+	htMode = 'HT40+'
 end 
 
 --- set values
