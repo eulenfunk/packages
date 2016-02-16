@@ -42,14 +42,14 @@ else
 end
 
 --- set values (1st pass)
-uci:set('wireless', interface24, 'country', 'DE')
+uci:set('wireless', interface24, 'country', 'BO')
 uci:set('wireless', interface24, 'htmode', htMode)
 uci:set('wireless', interface24, 'channel', channel) 
 uci:save('wireless')
 uci:commit('wireless')
-t = cmd('sleep 1')
+t = cmd('sleep 2')
 t = cmd('/sbin/wifi')
-t = cmd('sleep 1')
+t = cmd('sleep 8')
 
 --- get maximum available power and step
 t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 1 | awk \'{print $1}\'')
@@ -73,4 +73,4 @@ uci:commit('wireless')
 
 --- apply values
 t = cmd('/sbin/wifi')
-t = cmd('sleep 1')
+t = cmd('sleep 2')

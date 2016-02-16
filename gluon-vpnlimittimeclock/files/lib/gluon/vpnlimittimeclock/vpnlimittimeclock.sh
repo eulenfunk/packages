@@ -3,8 +3,7 @@
 #turn on the bandwidth limiter on meshvpn link by schedule. 
 #
 
-logfile="/tmp/vpnlimit.log"
-echo "$(date):vpnlimittimeclock invoked" >> $logfile
+logger -s -t "gluon-vpnlimittimeclock" -p 5 "vpnlimittimeclock invoked"
 
 vpnlimitoff="/tmp/vpnlimit.off"
 vpnlimiton="/tmp/vpnlimit.on"
@@ -24,7 +23,7 @@ if [ $? -eq 0 ]; then
         || ( ( [ $vpnlimiton -ge $vpnlimitoff ] ) && ( ( [ $CurrentTime -ge $vpnlimiton ] ) || ( [ $CurrentTime -le $vpnlimitoff ] ) ) ) ) ; then
         if [ $(uci get simple-tc.mesh_vpn.enabled) -eq 0 ] ; then
           uci set simple-tc.mesh_vpn.enabled=1
-          echo "$(date):VPN-bandwidthlimit aktiviert" >> $logfile
+          logger -s -t "gluon-vpnlimittimeclock" -p 5 "VPN-bandwidthlimit aktiviert"
           /etc/init.d/network restart
           rm $vpnlimitoff &>/dev/null
           echo 1> $vpnlimiton
@@ -32,14 +31,14 @@ if [ $? -eq 0 ]; then
        else
         if [ $(uci get simple-tc.mesh_vpn.enabled) -eq 1 ] ; then
           uci set simple-tc.mesh_vpn.enabled=0   
-          echo "$(date):VPN-bandwidthlimit deaktiviert" >> $logfile
+          logger -s -t "gluon-vpnlimittimeclock" -p 5 "VPN-bandwidthlimit deaktiviert"
           /etc/init.d/network restart
           rm $vpnlimiton &>/dev/null
           echo 1> $vpnlimitoff
          fi
       fi
      else
-      echo "simple-tc.mesh_vpn.clock_on or simple-tc.mesh_vpn.clock_off not set correctly to hhmm format."
+      logger -s -t "gluon-vpnlimittimeclock" -p 5 "simple-tc.mesh_vpn.clock_on or simple-tc.mesh_vpn.clock_off not set correctly to hhmm format."
      fi
    fi
  fi

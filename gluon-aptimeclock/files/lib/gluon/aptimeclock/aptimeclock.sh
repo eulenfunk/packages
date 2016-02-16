@@ -3,8 +3,7 @@
 #Check if ClientAP shall be limited
 #
 
-logfile="/tmp/ClientAP.log"
-echo "$(date):ClientAP invoked" >> $logfile
+logger -s -t "gluon-aptimeclock" -p 5 "ClientAP invoked"
 
 ClientRadio0off="/tmp/ClientRadio0.off"
 ClientRadio0on="/tmp/ClientRadio0.on"
@@ -24,7 +23,7 @@ if [ $? -eq 0 ]; then
         || ( ( [ $apclock0on -ge $apclock0off ] ) && ( ( [ $CurrentTime -le $apclock0on ] ) && ( [ $CurrentTime -ge $apclock0off ] ) ) ) ) ; then
         if [ $(uci get wireless.client_radio0.disabled) -eq 0 ] ; then
           uci set wireless.client_radio0.disabled=1
-          echo "$(date):APradio0 deaktiviert" >> $logfile
+          logger -s -t "gluon-aptimeclock" -p 5 "APradio0 deaktiviert"
           /sbin/wifi
           rm $ClientRadio0on &>/dev/null
           echo 1> $ClientRadio0off
@@ -32,14 +31,14 @@ if [ $? -eq 0 ]; then
        else
         if [ $(uci get wireless.client_radio0.disabled) -eq 1 ] ; then
           uci set wireless.client_radio0.disabled=0
-          echo "$(date):APradio0 aktiviert" >> $logfile
+          logger -s -t "gluon-aptimeclock" -p 5 "APradio0 aktiviert"
           /sbin/wifi
           rm $ClientRadio0off &>/dev/null
           echo 1> $ClientRadio0on
         fi
       fi
      else
-      echo "wireless.client_radio1.apclock0on or apclock0off not set correctly to hhmm format."
+      logger -s -t "gluon-aptimeclock" -p 5 "wireless.client_radio1.apclock0on or apclock0off not set correctly to hhmm format."
      fi
    fi
  fi
@@ -55,7 +54,7 @@ if [ $? -eq 0 ]; then
         || ( ( [ $apclock1on -ge $apclock1off ] ) && ( ( [ $CurrentTime -le $apclock1on ] ) && ( [ $CurrentTime -ge $apclock1off ] ) ) ) ) ; then
         if [ $(uci get wireless.client_radio1.disabled) -eq 0 ] ; then
           uci set wireless.client_radio1.disabled=1
-          echo "$(date):APradio1 deaktiviert" >> $logfile
+          logger -s -t "gluon-aptimeclock" -p 5 "APradio1 deaktiviert"
           /sbin/wifi
           rm $ClientRadio0on &>/dev/null
           echo 1> $ClientRadio1off
@@ -63,14 +62,14 @@ if [ $? -eq 0 ]; then
        else
         if [ $(uci get wireless.client_radio1.disabled) -eq 1 ] ; then
           uci set wireless.client_radio1.disabled=0
-          echo "$(date):APradio1 aktiviert" >> $logfile
+          logger -s -t "gluon-aptimeclock" -p 5 "APradio1 aktiviert"
           /sbin/wifi
           rm $ClientRadio0off &>/dev/null
           echo 1> $ClientRadio1on
         fi
       fi
      else
-      echo "wireless.client_radio1.apclock1on or .apclock1off not set correctly to hhmm format."
+      logger -s -t "gluon-aptimeclock" -p 5 "wireless.client_radio1.apclock1on or .apclock1off not set correctly to hhmm format."
      fi
    fi
  fi
