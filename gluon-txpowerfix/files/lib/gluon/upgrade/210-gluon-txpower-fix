@@ -56,7 +56,7 @@ t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 1 | awk \'{print $1}
 maximumTxPowerDb = string.gsub(t, "\n", "")
 maximumTxPowerDb = tonumber(maximumTxPowerDb)
 
-if maximumTxPowerDb < 20 then
+if maximumTxPowerDb < 30 then
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | wc -l')
         maximumTxPower = string.gsub(t, "\n", "")
         maximumTxPower = tonumber(maximumTxPower)-1
