@@ -1,8 +1,8 @@
 #! /bin/sh
 
 #Check if ClientAP shall be limited
-#
 
+sleep 25 # this is a hack
 logger -s -t "gluon-aptimeclock" -p 5 "ClientAP invoked"
 
 ClientRadio0off="/tmp/ClientRadio0.off"
@@ -73,14 +73,6 @@ if [ $? -eq 0 ]; then
      fi
    fi
  fi
-
-
-#case $CurrentDayOfWeek in
-#        0)
-#                #echo "Sonntag"
-#                DoLimit=1
-#                ;;
-# esac
 
 #eof
 

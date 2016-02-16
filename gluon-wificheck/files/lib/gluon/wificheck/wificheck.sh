@@ -5,6 +5,7 @@ if [ -z "$mname" ] ; then
  else
   echo radio: $mname
   mesh=$(batctl o|grep ibss0|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  sleep 4 # this is a hack
   wmesh=$(iw dev $mname scan|grep $mname|wc -l)
   bssid=$(uci get wireless.ibss_radio0.bssid)
   neighbours=$(iw dev $mname scan|grep $bssid|wc -l)

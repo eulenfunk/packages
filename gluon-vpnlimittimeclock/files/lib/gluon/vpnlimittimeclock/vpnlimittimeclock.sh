@@ -3,6 +3,7 @@
 #turn on the bandwidth limiter on meshvpn link by schedule. 
 #
 
+sleep 37 # this is a hack
 logger -s -t "gluon-vpnlimittimeclock" -p 5 "vpnlimittimeclock invoked"
 
 vpnlimitoff="/tmp/vpnlimit.off"
@@ -43,13 +44,4 @@ if [ $? -eq 0 ]; then
    fi
  fi
 
-
-#case $CurrentDayOfWeek in
-#        0)
-#                #echo "Sonntag"
-#                DoLimit=1
-#                ;;
-# esac
-
 #eof
-
