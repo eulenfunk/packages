@@ -1,0 +1,8 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+boot() {
+/lib/gluon/txpowerfix/txpowerfix.lua
+rm /etc/init.d/txpowerfix
+}
