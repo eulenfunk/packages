@@ -15,4 +15,4 @@ PACKAGES_EULENFUNK_BRANCH=chaos-calmer<br>
 
 With this done you can add the package *gluon-wificheck* to your site.mk
 
-This branch of the skript contains the weeklyreboot version for the current master based on openwrt chaos-calmer (upcoming 2016.1)
+This branch of the script contains the wificheck version for the current master based on openwrt chaos-calmer (gluon 2016.1), but should work with 2015.1.x as well. (untested)
