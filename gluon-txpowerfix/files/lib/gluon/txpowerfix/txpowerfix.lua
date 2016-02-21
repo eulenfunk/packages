@@ -42,7 +42,7 @@ else
 end
 
 --- set values (1st pass)
-uci:set('wireless', interface24, 'country', 'DE')
+uci:set('wireless', interface24, 'country', 'BO')
 uci:set('wireless', interface24, 'htmode', htMode)
 uci:set('wireless', interface24, 'channel', channel) 
 uci:save('wireless')
