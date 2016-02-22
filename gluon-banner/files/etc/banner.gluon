@@ -4,7 +4,6 @@
   {|~~~|}    respect PPA guidelines   http://www.picopeer.net
   {/^^^\}    building mesh networks   http://freifunk.net
    `m-m`     support needed?       -> http://forum.freifunk.net
-
  autoupdater -f                    // Firmware-Update erzwingen
  logread -f                        // syslog Ausgabe auf Konsole
  ping 8.8.8.8                      // google-DNS via vpn-uplink
@@ -17,3 +16,5 @@
  batctl -m bat0 tr 10.155.0.254    // Traceroute via batman-adv
  iwinfo                            // wlan-paramter anzeigen
  iw dev client0 station dump       // WLAN Nachbarn mit Details
+#
+
