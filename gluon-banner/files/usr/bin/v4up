@@ -1,0 +1,7 @@
+#!/bin/sh
+wget -O /dev/null --quiet http://nirgendwo.de 2>/dev/null
+if [ $? != 0 ]; then
+udhcpc -i br-client -q -S -n;
+fi
+echo -n "### IP :  "
+ifconfig |head|tail -n1

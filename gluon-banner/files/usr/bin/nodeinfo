@@ -1,0 +1,25 @@
+#!/bin/sh
+[ -f /etc/banner ] && cat /etc/banner
+echo -n "### IP :  "
+ifconfig |head|tail -n1
+echo    "### from ssh : "$SSH_CONNECTION
+echo -n "### uptime :  "
+uptime
+echo -n "### pubkey :  "
+/etc/init.d/fastd show_key mesh_vpn
+echo -n "### firmware :  "
+cat /lib/gluon/release
+echo -n "### hardware :  "
+cat /tmp/sysinfo/model
+echo -n "### connected to this node  :    "
+batctl tl |grep W |wc -l
+echo -n "### number of total clients :    "
+batctl tg |grep W |wc -l
+echo    "###"
+echo -n "/sys/class/net/bat0/mesh/hop_penalty :    "
+echo $(cat /sys/class/net/bat0/mesh/hop_penalty)
+echo "batctl gw :     " $(batctl gw)
+echo    "###"
+batctl gwl
+echo    "###"
+
