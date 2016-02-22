@@ -9,7 +9,8 @@
  logread -f                        // syslog Ausgabe auf Konsole
  ping 8.8.8.8                      // google-DNS via vpn-uplink
  batctl gwl                        // batman-gateways inkl. Gewaehltes
- batctl o                          // batman-adv nachbarn anzeigen
+ batctl o                          // batman-adv Nachbarn anzeigen
+ batctl tl |grep W |wc -l          // batman Clients anzeigen
  brctl show                        // alle bridges anzeigen
  ip a s                            // alle IPs anzeigen
  ip r s t all                      // gesamte Routingtabelle
