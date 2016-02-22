@@ -4,7 +4,7 @@ if [ -z "$mname" ] ; then
   exit 0
  else
   echo radio: $mname
-  mesh=$(batctl o|grep ibss0|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
   sleep 4 # this is a hack
   wmesh=$(iw dev $mname scan|grep $mname|wc -l)
   bssid=$(uci get wireless.ibss_radio0.bssid)
@@ -17,9 +17,14 @@ if [ -z "$mname" ] ; then
    else
     if [ "$mesh" -lt 1 ] ; then # alone?
       if [ -f /tmp/wifipbflag ] ; then
-        logger -s -t "gluon-wificheck" -p 5 "still no wifi neighbours, rebooting!"
-        sleep 3
-        reboot -f
+        if [ -f /tmp/wifipbflag2 ] ; then
+          logger -s -t "gluon-wificheck" -p 5 "2nd time no wifi neighbours, rebooting!"
+          sleep 3
+          reboot -f
+         else
+          logger -s -t "gluon-wificheck" -p 5 "still no wifi neighbours."
+          echo 1>/tmp/wifipbflag2
+         fi
        else
         logger -s -t "gluon-wificheck" -p 5 "lost wifi neighbours."
         echo 1>/tmp/wifipbflag
@@ -27,6 +32,9 @@ if [ -z "$mname" ] ; then
     else
      if [ -f /tmp/wifipbflag ] ; then
        rm /tmp/wifipbflag
+      fi
+     if [ -f /tmp/wifipbflag2 ] ; then
+       rm /tmp/wifipbflag2
       fi
     fi
    fi
