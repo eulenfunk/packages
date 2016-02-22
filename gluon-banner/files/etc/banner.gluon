@@ -4,6 +4,7 @@
   {|~~~|}    respect PPA guidelines   http://www.picopeer.net
   {/^^^\}    building mesh networks   http://freifunk.net
    `m-m`     support needed?       -> http://forum.freifunk.net
+                                      http://eulenfunk.de
  autoupdater -f                    // Firmware-Update erzwingen
  logread -f                        // syslog Ausgabe auf Konsole
  ping 8.8.8.8                      // google-DNS via vpn-uplink
