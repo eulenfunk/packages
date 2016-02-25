@@ -82,7 +82,7 @@ endef
 define Package/gluon-banner/install
 	$(INSTALL_DIR) $(1)/etc/
 	$(INSTALL_DATA) ./files/etc/banner.gluon $(1)/etc/
-        $(CP) ./files/* $(1)/
+	$(CP) ./files/* $(1)/
 endef
 
 
