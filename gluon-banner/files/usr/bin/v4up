@@ -1,5 +1,5 @@
 #!/bin/sh
-wget -O /dev/null --quiet http://nirgendwo.de 2>/dev/null
+wget -O /dev/null --quiet http://www.heise.de 2>/dev/null
 if [ $? != 0 ]; then
 udhcpc -i br-client -q -S -n;
 fi
