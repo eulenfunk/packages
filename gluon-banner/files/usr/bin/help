@@ -1,0 +1,16 @@
+echo " autoupdater -f                    // Firmware-Update erzwingen
+ logread      // logread -f        // syslog Ausgabe auf Konsole
+ ping 8.8.8.8                      // google-DNS wenn IPv4 lokal 
+ ip a s                            // alle IPs anzeigen
+ ip r s t all                      // gesamte Routingtabelle
+ traceroute -n 10.155.0.254        // Traceroute via IP zu einem gateway
+ batctl gwl                        // batman-gateways inkl. Gewaehltes
+ batctl -m bat0 tr 10.155.0.254    // Traceroute via batman-adv
+ batctl o                          // batman Domain-Nachbarn anzeigen
+ batctl tl |grep W |wc -l          // batman Clients zählen
+ batctl if                         // baman interfaces anzeigen
+ brctl show                        // alle bridges anzeigen
+ iwinfo                            // wlan-paramter anzeigen
+ iw dev client0 station dump       // WLAN Nachbarn mit Details
+ nodeinfo                          // diverse infos ausgegeben
+ v4up                              // ipv4 holen, wenn kein vpnuplink"
