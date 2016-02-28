@@ -5,9 +5,4 @@
    {|~~~|}    building mesh networks   http://freifunk.net/
    {/^^^\}    network documentation    http://eulenfunk.de/
  ---`m-m`---  support needed?       -> http://forum.freifunk.net/
-____________________________________________________________________
-
-              for command line help type 'help'
-____________________________________________________________________
-
-
+for command line help type 'help' - for status info type 'nodeinfo'
