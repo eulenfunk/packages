@@ -4,11 +4,12 @@ if [ -z "$mname" ] ; then
   exit 0
  else
   echo radio: $mname
-  mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
-  sleep 4 # this is a hack
   wmesh=$(iw dev $mname scan|grep $mname|wc -l)
+  sleep 4 # this is a hack
   bssid=$(uci get wireless.ibss_radio0.bssid)
   neighbours=$(iw dev $mname scan|grep $bssid|wc -l)
+  sleep 4 
+  mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
   logger -s -t "gluon-wificheck" -p 5 "ibss-bat-neighbours: $mesh wifiadhocs-neighbours: $wmesh wifimesh-neighbours: $neighbours"
   if [ ! -f /tmp/noisland ] ; then
     if [ "$mesh" -gt 1 ] ; then #minimum 2 neighbors
