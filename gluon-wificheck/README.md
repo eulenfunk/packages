@@ -1,10 +1,10 @@
-gluon wifi neighbor check
-=========================
+gluon wifi neighbour check
+==========================
 
-this script looks for wifi mesh neighbors. 
+this script looks for wifi mesh neighbours. 
 If at least 2 meshneibours are found once (after boot), the script is set into trigger mode. 
 
-then the absence of neighbors in the wifimesh will alert the node. and if the absence is still present the next minute, the node is rebootet. 
+then the absence of neighbours in the wifimesh will alert the node. and if the absence is still present the next minute, the node is rebootet. 
 
 Create a file "modules" with the following content in your ./gluon/site/ directory:
 
