@@ -1,7 +1,7 @@
 weekly reboot
 =============
 
-this script basically reboots a node once a week on friday nights at a random point between 3h15 and 6h AM. 
+this script basically reboots a node once a week on thursday nights at a random point between 3h15 and 6h AM. 
 
 Create a file "modules" with the following content in your ./gluon/site/ directory:
 

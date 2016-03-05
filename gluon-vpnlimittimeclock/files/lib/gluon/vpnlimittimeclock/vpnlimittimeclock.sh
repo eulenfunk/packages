@@ -4,7 +4,7 @@
 #
 
 sleep 37 # this is a hack
-logger -s -t "gluon-vpnlimittimeclock" -p 5 "vpnlimittimeclock invoked"
+#logger -s -t "gluon-vpnlimittimeclock" -p 5 "vpnlimittimeclock invoked"
 
 vpnlimitoff="/tmp/vpnlimit.off"
 vpnlimiton="/tmp/vpnlimit.on"

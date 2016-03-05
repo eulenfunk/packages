@@ -13,43 +13,13 @@ export PS1='\u@\h:\w\$ '
 
 [ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
 [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
-# get ipv4 if not already there, checked simply by wget call
-# but be aware that a meshing node may start fastd connections
-# which results in freifunk through freifunk in some cases
-wget -O /dev/null --quiet http://nirgendwo.de 2>/dev/null
-if [ $? != 0 ]; then
- udhcpc -i br-client -q -S -n;
-fi
-echo " "
-echo "##########################################"
-echo -n "### IP :  "
-ifconfig |head|tail -n1
-echo    "### from ssh : "$SSH_CONNECTION
-echo -n "### uptime :  "
-uptime
-echo -n "### pubkey :  "
-/etc/init.d/fastd show_key mesh_vpn
-echo -n "### firmware :  "
-cat /lib/gluon/release
-echo -n "### hardware :  "
-cat /tmp/sysinfo/model
-echo -n "### connected to this node  :    "
-batctl tl |grep W |wc -l
-echo -n "### number of total clients :    "
-batctl tg |grep W |wc -l
-echo    "########################################"
-echo -n "/sys/class/net/bat0/mesh/hop_penalty :    "
-echo $(cat /sys/class/net/bat0/mesh/hop_penalty)
-echo "batctl gw :     " $(batctl gw)
-echo    "########################################"
 batctl gwl
 echo    "########################################"
-
 
 # just some handy aliases
 alias cd..="cd .."
 alias myip="echo -n 'ifconfig' && ifconfig |head|tail -n1 && echo 'from ssh : ' $SSH_CONNECTION"
 alias status="source /etc/profile"
 alias ll="ls -la"
-PS1='$? ${debian_chroot:+($debian_chroot)}\[\033[01;33m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
 

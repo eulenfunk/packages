@@ -3,7 +3,7 @@
 #Check if ClientAP shall be limited
 
 sleep 25 # this is a hack
-logger -s -t "gluon-aptimeclock" -p 5 "ClientAP invoked"
+#logger -s -t "gluon-aptimeclock" -p 5 "ClientAP invoked"
 
 ClientRadio0off="/tmp/ClientRadio0.off"
 ClientRadio0on="/tmp/ClientRadio0.on"
