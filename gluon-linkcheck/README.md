@@ -14,6 +14,21 @@ when in trigger mode the absence of neighbours in the wifimesh will alert the no
 on batctl-o table the "island detection" will be only triggered if the respective link is up. 
 in other words: if the lan-link (eth wan/lan) is down ("really disconnected cable"), the reset will not perform. it only detects for "link up, but no partners visible in the link".
 
+example:  (wifi turned off "on purpose")
+
+    Fri Mar 11 11:25:07 2016 user.notice gluon-linkcheck: batadv.br-wan:4 batadv.ibss0:0 ibss0.neighbours:2 ibss0.wadhoc:13
+    Fri Mar 11 11:30:07 2016 user.notice gluon-linkcheck: batadv.br-wan:4 batadv.ibss0:0 ibss0.neighbours:2 ibss0.wadhoc:13
+    Fri Mar 11 11:35:07 2016 user.notice gluon-linkcheck: batadv.br-wan:4 batadv.ibss0:0 ibss0.neighbours:2 ibss0.wadhoc:11
+    Fri Mar 11 11:40:05 2016 user.notice gluon-linkcheck: lost neighbours ibss0.neighbours.
+    Fri Mar 11 11:40:05 2016 user.notice gluon-linkcheck: lost neighbours ibss0.wadhoc.
+    Fri Mar 11 11:40:05 2016 user.notice gluon-linkcheck: batadv.br-wan:4 ibss0.neighbours:0 ibss0.wadhoc:0
+    Fri Mar 11 11:45:06 2016 user.notice gluon-linkcheck: still no neighbours ibss0.neighbours, wifi restart
+    Fri Mar 11 11:45:06 2016 user.notice gluon-linkcheck: still no neighbours ibss0.wadhoc, wifi restart
+    Fri Mar 11 11:45:06 2016 user.notice gluon-linkcheck: batadv.br-wan:4 ibss0.neighbours:0 ibss0.wadhoc:0
+    Fri Mar 11 11:50:05 2016 user.notice gluon-linkcheck: 2nd time no neighbours ibss0.neighbours, rebooting!
+    packet_write_wait: Connection to fda0:747e:ab29:9375:6666:b3ff:fede:a7e4 port 22: Broken pipe
+
+
 Create a file "modules" with the following content in your ./gluon/site/ directory:
 
 GLUON_SITE_FEEDS="eulenfunk"<br>
