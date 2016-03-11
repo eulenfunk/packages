@@ -1,5 +1,4 @@
 #! /bin/sh
-
 valuecheck ()
  {
   logstring=$logstring" "$linkname"."$check":"$wert
@@ -12,12 +11,13 @@ valuecheck ()
       if [ -f /tmp/linkcheck.$linkname.$check.linkpb1 ] ; then
         if [ -f /tmp/linkcheck.$linkname.$check.linkpb2 ] ; then
           logger -s -t "gluon-linkcheck" -p 5 "2nd time no neighbours $linkname.$check, rebooting!"
-          sleep 3
+          sleep 10
           reboot -f
          else
           logger -s -t "gluon-linkcheck" -p 5 "still no neighbours $linkname.$check, wifi restart"
           echo 1>/tmp/linkcheck.$linkname.$check.linkpb2
           /sbin/wifi
+          sleep 10
          fi
        else
         logger -s -t "gluon-linkcheck" -p 5 "lost neighbours $linkname.$check."
@@ -56,10 +56,9 @@ for link in $links
 for linkname in $linknames
  do
   wadhoc=$(iw dev $linkname scan|grep $linkname|wc -l)
-  sleep 5 # this is a hack
+  sleep 8 # this is a hack
   bssid=$(uci get wireless.ibss_radio0.bssid)
   neighbours=$(iw dev $linkname scan|grep $bssid|wc -l)
-#  logstring="$logstring $linkname - wifiadhocs-neighbours:$wadhoc wifibatmesh-neighbours:$neighbours"
   checks="neighbours wadhoc"
   for check in $checks
    do
