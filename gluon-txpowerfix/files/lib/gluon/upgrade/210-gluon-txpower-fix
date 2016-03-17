@@ -11,26 +11,45 @@ function cmd(_command)
         return l
 end
 
---- first of all, get 2.4GHz wifi interface
-local interface24 = false
+--- first of all, get the right 2.4GHz wifi interface
 if uci:get('wireless', 'radio0', 'hwmode') then
-        hwmode = uci:get('wireless', 'radio0', 'hwmode')
-        if hwmode == '11g' then
-                interface24 = 'radio0'
-        end
+	hwmode = uci:get('wireless', 'radio0', 'hwmode')
+	if hwmode == '11ng' then
+		interface24 = 'radio0'
+		hwmodeR1 = uci:get('wireless', 'radio1', 'hwmode')
+		if hwmodeR1 == '11na' then
+			interface50 = 'radio1'
+		elseif hwmodeR1 == '11a' then
+			interface50 = 'radio1'
+		end
+	elseif hwmode == '11g' then
+		interface24 = 'radio0'
+		hwmodeR1 = uci:get('wireless', 'radio1', 'hwmode')
+		if hwmodeR1 == '11na' then
+			interface50 = 'radio1'
+		elseif hwmodeR1 == '11a' then
+			interface50 = 'radio1'
+		end
+	elseif hwmode == '11na' then
+		interface50 = 'radio0'
+		hwmodeR1 = uci:get('wireless', 'radio1', 'hwmode')
+		if hwmodeR1 == '11ng' then
+			interface24 = 'radio1'
+		elseif hwmodeR1 == '11g' then
+			interface24 = 'radio1'
+		end
+	elseif hwmode == '11a' then
+		interface50 = 'radio0'
+		hwmodeR1 = uci:get('wireless', 'radio1', 'hwmode')
+		if hwmodeR1 == '11ng' then
+			interface24 = 'radio1'
+		elseif hwmodeR1 == '11g' then
+			interface24 = 'radio1'
+		end
+	else
+		os.exit(0) -- something went wrong
+	end
 end
-
---- try with radio1 if radio0 seems not the correct interface
-if not interface24 and uci:get('wireless', 'radio1', 'hwmode') then
-        hwmode = uci:get('wireless', 'radio1', 'hwmode')
-        if hwmode == '11g' then
-                interface24 = 'radio1'
-        end
-end
-if not interface24 then
-        os.exit(0) -- something went wrong
-end
-
 --- determine HT-Mode direction
 channel = uci:get('wireless', interface24, 'channel')
 if channel == '13' then
