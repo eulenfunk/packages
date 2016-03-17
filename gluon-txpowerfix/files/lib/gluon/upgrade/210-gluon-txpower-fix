@@ -12,6 +12,8 @@ function cmd(_command)
 end
 
 --- first of all, get the right 2.4GHz wifi interface
+local interface24 = false
+local interface50 = false
 if uci:get('wireless', 'radio0', 'hwmode') then
 	hwmode = uci:get('wireless', 'radio0', 'hwmode')
 	if hwmode == '11ng' then
