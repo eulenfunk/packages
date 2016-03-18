@@ -35,6 +35,8 @@ end
 channel = uci:get('wireless', interface24, 'channel')
 if channel == '13' then
         htMode = 'HT40-'
+elseif channel == '12' then
+        htMode = 'HT40-'
 elseif channel == '11' then
         htMode = 'HT40-'
 else
