@@ -38,7 +38,7 @@ if [ $? -eq 0 ]; then
         fi
       fi
      else
-      logger -s -t "gluon-aptimeclock" -p 5 "wireless.client_radio1.apclock0on or apclock0off not set correctly to hhmm format."
+      logger -s -t "gluon-aptimeclock" -p 5 "wireless.client_radio0.apclock0on or apclock0off not set correctly to hhmm format."
      fi
    fi
  fi
