@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# script to help meshnodes make an autoupdate
+# a node which looses connection (because a uplink mesh node is talking newer 
+# batman v15 or 802.11s) try to log in as client in a network with known ssid
+# and forces a autoupdate (if it is turned on in general)
+
+# some cron debug help , write in ram 
+echo "migration helper successfully startet at $(date +%y%m%d_%H%M)" > /tmp/migration-helper_lastrun
+
+# if your script is dependend on autoupdater, do only uptate if its realy enabled!
+if [ $(uci get autoupdater.settings.enabled) = 0 ]; then exit 1; fi
+
+# check for gateways 5 times every 30 seconds
+# to prevent false positives
+for i in $(seq 1 5)
+do
+        if [ i != 1 ]; then sleep 30; fi
+	gwl=$(batctl gwl -H |wc -l); if [ $gwl != 0 ]; then exit 1$i; fi
+done
+
+# check if freifunk as we know it is nearby
+ffssid=$(uci get wireless.client_radio0.ssid)
+: ${ffssid:=Freifunk} # if for whatever reason frssid is NULL
+many=$(iwinfo phy0 scan |grep $ffssid | wc -l)
+
+# connect to freifunk
+if [ $many != 0 ]; then
+	#accept v6 ra
+	cat /proc/sys/net/ipv6/conf/all/accept_ra > /tmp/accept_ra_tmp
+	cat /proc/sys/net/ipv6/conf/all/autoconf > /tmp/autoconf_tmp
+	echo 1 > /proc/sys/net/ipv6/conf/all/accept_ra
+	echo 1 > /proc/sys/net/ipv6/conf/all/autoconf
+
+	iw phy0 interface add update type managed
+	ifconfig update up
+	iw update connect $ffssid
+	sleep 30
+	autoupdater -f
+
+	#restore settings if update fails
+	cat /tmp/accept_ra_tmp > /proc/sys/net/ipv6/conf/all/accept_ra
+	cat /tmp/autoconf_tmp > /proc/sys/net/ipv6/conf/all/autoconf
+fi
+
+# if autoupdater and first checks above run correct you should never reach this point
+# better safe than sorry - taking new IF down
+iw update del
+# special exitcode
+exit 21
