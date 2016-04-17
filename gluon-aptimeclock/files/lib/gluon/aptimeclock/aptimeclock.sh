@@ -19,8 +19,7 @@ if [ $? -eq 0 ]; then
     apclock0on=$(uci get wireless.client_radio0.clock_on)
     apclock0off=$(uci get wireless.client_radio0.clock_off)
     if ( [ ${#apclock0on} -eq 4 ] ) && ( [ ${#apclock0off} -eq 4 ] ) ; then
-      if ( ( ( [ $apclock0on -le $apclock0off ] ) && ( ( [ $CurrentTime -le $apclock0on ] ) || ( [ $CurrentTime -ge $apclock0off ] ) ) ) \ 
-        || ( ( [ $apclock0on -ge $apclock0off ] ) && ( ( [ $CurrentTime -le $apclock0on ] ) && ( [ $CurrentTime -ge $apclock0off ] ) ) ) ) ; then
+      if ( ( ( [ $apclock0on -le $apclock0off ] ) && ( ( [ $CurrentTime -le $apclock0on ] ) || ( [ $CurrentTime -ge $apclock0off ] ) ) ) || ( ( [ $apclock0on -ge $apclock0off ] ) && ( ( [ $CurrentTime -le $apclock0on ] ) && ( [ $CurrentTime -ge $apclock0off ] ) ) ) ) ; then
         if [ $(uci get wireless.client_radio0.disabled) -eq 0 ] ; then
           uci set wireless.client_radio0.disabled=1
           logger -s -t "gluon-aptimeclock" -p 5 "APradio0 deaktiviert"
@@ -50,8 +49,7 @@ if [ $? -eq 0 ]; then
     apclock1on=$(uci get wireless.client_radio1.clock_on)
     apclock1off=$(uci get wireless.client_radio1.clock_off)
     if ( [ ${#apclock1on} -eq 4 ] ) && ( [ ${#apclock1off} -eq 4 ] ) ; then
-      if ( ( ( [ $apclock1on -le $apclock1off ] ) && ( ( [ $CurrentTime -le $apclock1on ] ) || ( [ $CurrentTime -ge $apclock1off ] ) ) ) \
-        || ( ( [ $apclock1on -ge $apclock1off ] ) && ( ( [ $CurrentTime -le $apclock1on ] ) && ( [ $CurrentTime -ge $apclock1off ] ) ) ) ) ; then
+      if ( ( ( [ $apclock1on -le $apclock1off ] ) && ( ( [ $CurrentTime -le $apclock1on ] ) || ( [ $CurrentTime -ge $apclock1off ] ) ) ) || ( ( [ $apclock1on -ge $apclock1off ] ) && ( ( [ $CurrentTime -le $apclock1on ] ) && ( [ $CurrentTime -ge $apclock1off ] ) ) ) ) ; then
         if [ $(uci get wireless.client_radio1.disabled) -eq 0 ] ; then
           uci set wireless.client_radio1.disabled=1
           logger -s -t "gluon-aptimeclock" -p 5 "APradio1 deaktiviert"
