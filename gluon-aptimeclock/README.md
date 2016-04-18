@@ -9,10 +9,10 @@ if on < off - ClientAP working during daytime<br>
 if off < on - ClientAP working during nighttime<br>
 <br>
 example: <br>
-uci set wireless.client_radio0.clock_on=0815<br>
-uci set wireless.client_radio0.clock_off=2045<br>
-uci set wireless.client_radio1.clock_on=0730<br>
-uci set wireless.client_radio1.clock_off=1935<br>
+uci set wireless.radio0.client_clock_on=0815<br>
+uci set wireless.radio0.client_clock_off=2045<br>
+uci set wireless.radio1.client_clock_on=0730<br>
+uci set wireless.radio1.client_clock_off=1935<br>
 <br>
 GLUON_SITE_FEEDS="eulenfunk"<br>
 PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git<br>
