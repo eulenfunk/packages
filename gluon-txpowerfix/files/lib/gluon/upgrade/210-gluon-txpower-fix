@@ -76,16 +76,19 @@ t = cmd('/sbin/wifi')
 t = cmd('sleep 8')
 
 --- get maximum available power and step
-t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 1 | awk \'{print $1}\'')
+ # t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 1 | awk \'{print $1}\'')
+ t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
 maximumTxPowerDb = string.gsub(t, "\n", "")
 maximumTxPowerDb = tonumber(maximumTxPowerDb)
 
 if maximumTxPowerDb < 30 then
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | wc -l')
         maximumTxPower = string.gsub(t, "\n", "")
-        maximumTxPower = tonumber(maximumTxPower)-1
+        # maximumTxPower = tonumber(maximumTxPower)-1
+        maximumTxPower = tonumber(maximumTxPower)-2
 else
-        t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | grep -n "20 dBm" | cut -f1 -d\':\'')
+#       t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | grep -n "20 dBm" | cut -f1 -d\':\'')
+        t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | grep -n "19 dBm" | cut -f1 -d\':\'')
         maximumTxPower = string.gsub(t, "\n", "")
         maximumTxPower = tonumber(maximumTxPower)-1
 end
