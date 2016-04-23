@@ -69,6 +69,8 @@ end
 uci:set('wireless', interface24, 'country', 'BO')
 uci:set('wireless', interface24, 'htmode', htMode)
 uci:set('wireless', interface24, 'channel', channel) 
+uci:set('wireless', interface24, 'supported_rates', '6000 9000 12000 18000 24000 36000 48000 54000')
+uci:set('wireless', interface24, 'basic_rate', '6000 9000 18000 36000 54000')
 uci:save('wireless')
 uci:commit('wireless')
 t = cmd('sleep 2')
