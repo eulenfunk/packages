@@ -1,0 +1,6 @@
+*/2    * * * *   /lib/gluon/hotfix/fixbat0br.sh
+1-59/2 * * * *   /lib/gluon/hotfix/fixbat0br.sh
+*/8    * * * *   /lib/gluon/hotfix/rebootIfNoGw.sh
+*/8    * * * *   /lib/gluon/hotfix/rebootIfNoWifiMeshAnymore.sh
+0      * * * *   /lib/gluon/hotfix/wifiDiscovery.sh
+0      5 * * 2-7 /lib/gluon/hotfix/rebootIfNoWifiMeshAnymore.sh
