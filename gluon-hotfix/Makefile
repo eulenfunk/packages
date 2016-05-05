@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gluon-hotfix
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=WIFI-Neighborcheck
+  TITLE:=Hotfix-collection_VFN
   DEPENDS:=+gluon-core +micrond
 endef
 
