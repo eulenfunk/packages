@@ -1,5 +1,0 @@
-*/2    * * * *   sh /usr/sbin/ff-fixbat0br
-1-59/2 * * * *   sh /usr/sbin/ff-fixbat0br
-*/8    * * * *   sh /usr/sbin/ff-rebootIfNoGw
-*/8    * * * *   sh /usr/sbin/ff-rebootIfNoWifiMeshAnymore
-0      5 * * 2-7 sh /usr/sbin/ff-RebootWithNoWifiClients
