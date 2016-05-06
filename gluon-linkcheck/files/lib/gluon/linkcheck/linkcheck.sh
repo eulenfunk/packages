@@ -12,6 +12,8 @@ valuecheck ()
         if [ -f /tmp/linkcheck.$linkname.$check.linkpb2 ] ; then
           logger -s -t "gluon-linkcheck" -p 5 "2nd time no neighbours $linkname.$check, rebooting!"
           sleep 10
+          upgrade_started='/tmp/autoupdate.lock'
+          [ -f $upgrade_started ] && exit
           reboot -f
         else
           logger -s -t "gluon-linkcheck" -p 5 "still no neighbours $linkname.$check, wifi restart"
@@ -33,6 +35,9 @@ valuecheck ()
     fi
   fi
 }
+
+upgrade_started='/tmp/autoupdate.lock'
+[ -f $upgrade_started ] && exit
 
 linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
