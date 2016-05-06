@@ -1,7 +1,8 @@
+#!/bin/sh
 mesh0='/tmp/wifi_mesh0_mesh'
 mesh0gone='/tmp/wifi_mesh0_mesh_gone'
 
-batctl o | grep -q "mesh0"
+batctl o | grep -q "ibss0"
 if [ $? == 0 ] ; then
   #found wifi-mesh on mesh0*
   touch $mesh0

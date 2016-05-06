@@ -1,3 +1,4 @@
+#!/bin/sh
 batctl gwl | grep -q "No gateways in range"
 if [ $? == 0 ] ; then
   if [ -f /tmp/nogwflag ] ; then

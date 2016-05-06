@@ -52,10 +52,10 @@ for link in $links; do
   fi
 done
 for linkname in $linknames; do
-  wadhoc=$(iw dev $linkname scan|grep $linkname|wc -l)
+  wadhoc=$(iw dev $linkname scan lowpri passive|grep $linkname|wc -l)
   sleep 8 # this is a hack
   bssid=$(uci get wireless.ibss_radio0.bssid)
-  neighbours=$(iw dev $linkname scan|grep $bssid|wc -l)
+  neighbours=$(iw dev $linkname scan lowpri passive|grep $bssid|wc -l)
   checks="neighbours wadhoc"
   for check in $checks; do
     wert=$(eval echo \$$check)
