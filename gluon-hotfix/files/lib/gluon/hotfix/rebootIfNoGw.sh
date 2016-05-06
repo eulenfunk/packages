@@ -1,3 +1,4 @@
+#!/bin/sh
 upgrade_started='/tmp/autoupdate.lock'
 
 [ -f $upgrade_started ] && exit
