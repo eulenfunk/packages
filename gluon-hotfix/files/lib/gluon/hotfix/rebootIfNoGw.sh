@@ -36,10 +36,13 @@ else
 fi
 
 #check if wifi is stucking
-rm -f /tmp/wifi.running
-(iw dev > /dev/null && touch /tmp/wifi.running || if [ "$?" -eq 127 ]; then touch /tmp/wifi.running; fi ) &
-sleep 5
-if [ ! -f /tmp/wifi.running ]; then
-  [ -f $upgrade_started ] && exit
-   securereboot
+radio0=$(uci get wireless.radio0) 2>/dev/null
+if [ "$?" -eq 0 ] ; then
+  rm -f /tmp/wifi.running
+  (iw dev > /dev/null && touch /tmp/wifi.running || if [ "$?" -eq 127 ]; then touch /tmp/wifi.running; fi ) &
+  sleep 5
+  if [ ! -f /tmp/wifi.running ]; then
+    [ -f $upgrade_started ] && exit
+     securereboot
+  fi
 fi
