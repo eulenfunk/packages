@@ -1,5 +1,4 @@
 #!/bin/sh
-
 upgrade_started='/tmp/autoupdate.lock'
 
 L2MESH=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v bat0 | tr '\n' ' ')
