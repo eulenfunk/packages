@@ -4,11 +4,10 @@ upgrade_started='/tmp/autoupdate.lock'
 
 L2MESH=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v bat0 | tr '\n' ' ')
 
-r0ap=$(uci get wireless.client_radio0.disabled)
-r1ap=$(uci get wireless.client_radio1.disabled)
+r0ap=$(uci get wireless.client_radio0.disabled) 2>/dev/null
+r1ap=$(uci get wireless.client_radio1.disabled) 2>/dev/null
 
 if [ $r0ap = '0' ] | [ $r1ap = '0' ] ; then
-
   CLIENT_MACS=""
   for if in $L2MESH; do
     CLIENT_MACS=`iw dev $if station dump | grep ^Station | cut -d ' ' -f 2`
