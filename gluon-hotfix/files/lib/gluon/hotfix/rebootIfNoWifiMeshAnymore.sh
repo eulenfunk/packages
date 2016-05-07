@@ -6,10 +6,10 @@ upgrade_started='/tmp/autoupdate.lock'
 
 [ -f $upgrade_started ] && exit
 
-r0mesh=$(uci get wireless.mesh_radio0.disabled)
-r1mesh=$(uci get wireless.mesh_radio1.disabled)
-r0ibss=$(uci get wireless.ibss_radio0.disabled)
-r1ibss=$(uci get wireless.ibss_radio1.disabled)
+r0mesh=$(uci get wireless.mesh_radio0.disabled) 2>/dev/null
+r1mesh=$(uci get wireless.mesh_radio1.disabled) 2>/dev/null
+r0ibss=$(uci get wireless.ibss_radio0.disabled) 2>/dev/null
+r1ibss=$(uci get wireless.ibss_radio1.disabled) 2>/dev/null
 
 if [ $r0mesh = '0' ] | [ $r0mesh = '0' ] | [ $r0mesh = '0' ] | [ $r0mesh = '0' ] ; then
   batctl o | grep -q "ibss0\|mesh0"
