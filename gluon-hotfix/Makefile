@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/gluon-hotfix
   SECTION:=gluon
-  CATEGORY:=Gluon
+  CATEGORY:=Workaround
   TITLE:=Hotfix-collection_VFN
   DEPENDS:=+gluon-core +micrond
 endef
