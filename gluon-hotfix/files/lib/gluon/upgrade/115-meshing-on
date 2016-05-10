@@ -1,0 +1,41 @@
+#!/usr/bin/lua
+
+site = require("gluon.site_config")
+uci = require('luci.model.uci').cursor()
+
+--- wrapper for calling systemcommands
+function cmd(_command)
+        local f = io.popen(_command)
+        local l = f:read("*a")
+        f:close()
+        return l
+end
+
+--- set meshing for both standards on.
+state = uci:get('wireless', 'ibss_radio0', 'disabled')
+if state == '1' then
+        uci:set('wireless', 'ibss_radio0', 'disabled', '0')
+end
+state = uci:get('wireless', 'ibss_radio1', 'disabled')
+if state == '1' then
+        uci:set('wireless', 'ibss_radio1', 'disabled', '0')
+end
+
+state = uci:get('wireless', 'mesh_radio0', 'disabled')
+if state == '1' then
+        uci:set('wireless', 'mesh_radio0', 'disabled', '0')
+end
+
+state = uci:get('wireless', 'mesh_radio1', 'disabled')
+if state == '1' then
+        uci:set('wireless', 'mesh_radio1', 'disabled', '0')
+end
+
+uci:commit('wireless')
+
+--- disable rebroadcast
+uci:set('network', 'mesh_wan', 'mesh_no_rebroadcast', '1')
+uci:set('network', 'mesh_lan', 'mesh_no_rebroadcast', '1')
+
+uci:commit('network')
+
