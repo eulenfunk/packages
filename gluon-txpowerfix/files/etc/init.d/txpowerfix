@@ -8,6 +8,7 @@ if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then
   logger -s -t "gluon-txpowerfix" -p 5 "txpowerfix executed once, delete self."
   echo "txpowerfix executed once, delete self." >/tmp/txpowerfix.done
   rm /etc/init.d/txpowerfix
+  (sleep 20; rm /etc/rc.d/S99txpowerfix)&
  fi
 }
 
@@ -17,6 +18,6 @@ if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then
   logger -s -t "gluon-txpowerfix" -p 5 "txpowerfix executed once, delete self."
   echo "txpowerfix executed once, delete self." >/tmp/txpowerfix.done
   rm /etc/init.d/txpowerfix
-  rm /etc/rc.d/S99txpowerfix
+  (sleep 20; rm /etc/rc.d/S99txpowerfix)&
  fi
 }
