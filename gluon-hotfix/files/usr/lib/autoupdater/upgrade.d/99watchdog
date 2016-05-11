@@ -6,4 +6,4 @@ logger starting 99watchdog
  trap "echo ignoring SIGINT" 2
  trap "echo ignoring SIGTERM" 15 
  trap "echo ignoring SIGKILL" 9 
- sleep 400; sleep 300; sleep 200; sleep 100;reboot&>/dev/null;reboot)&
+ sleep 500; sleep 400; sleep 300; sleep 200;reboot&>/dev/null;reboot)&
