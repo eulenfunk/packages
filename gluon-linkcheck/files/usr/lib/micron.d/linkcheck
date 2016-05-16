@@ -1,1 +1,1 @@
-*/5 * * * * /lib/gluon/linkcheck/linkcheck.sh
+*/15 * * * * /lib/gluon/linkcheck/linkcheck.sh
