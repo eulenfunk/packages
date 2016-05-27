@@ -1,0 +1,35 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
+local function fix_radio(radio, index, config)
+  local hwmode = uci:get('wireless', radio, 'hwmode')
+  local band = '24'
+
+  if hwmode == '11a' or hwmode == '11na' then
+    band = '5'
+  end
+
+  local htmode = 'HT40'
+
+  if type(config.htmode) == string then
+    htmode = config.htmode
+  end
+
+  uci:set('wireless', radio, 'htmode', htmode)
+
+  if bind == '24' then
+    uci:set('wireless', radio, 'country', 'BO')
+    uci:set('wireless', radio, 'supported_rates', '6000 9000 12000 18000 24000 36000 48000 54000')
+    uci:set('wireless', radio, 'basic_rate', '6000 9000 18000 36000 54000')
+  end
+end
+
+util.iterate_radios(fix_radio)
+
+uci:save('wireless')
+uci:commit('wireless')
+
