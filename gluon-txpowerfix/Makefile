@@ -11,16 +11,14 @@ define Package/gluon-txpowerfix
   SECTION:=admin
   CATEGORY:=Workaround
   DEPENDS:=+wireless-tools
-  TITLE:=Fixes txpower on some wifi nodes under chaos calmer (gluon 2016.1)
+  TITLE:=Fixes txpower under Chaos Calmer (Gluon 2016.1+)
 endef
 
 define Package/gluon-txpowerfix/description
-	With chaoscalmer, wifi nodes seemed to be locked to less txpower than they could do.
-	First suggestions are, that this is a mistake in the upstream OpenWrt-Code. Even the
-	bugtrackers of OpenWrt are full of this. 
-	The idea of this workaround is, to check if the txpower could be increased iff it isn't
-	already set to a special value. Unfortunately this can only be done by setting the 
-	country code to 00/BO.
+	In Chaos Calmer (Gluon v2016.1+) the limitations of the DE regulatory domain 
+	have changed to an unrealistically low value. This script removes the 
+        excessive limitations of the DE regulatory domain from the 2.4 GHz iface by 
+        setting the country code to BO.
 endef
 
 define Build/Prepare

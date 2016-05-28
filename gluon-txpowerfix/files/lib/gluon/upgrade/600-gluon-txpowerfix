@@ -1,0 +1,96 @@
+#!/usr/bin/lua
+
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
+local function cmd(_command)
+  local f = io.popen(_command)
+  local l = f:read("*a")
+  f:close()
+  return l
+end
+
+local function fix_radio(radio, index, config)
+  local hwmode = uci:get('wireless', radio, 'hwmode')
+  local channel = tonumber(uci:get('wireless', radio, 'channel'))
+
+  local auto_htmode
+  local is_ac = false
+
+  --- band 2.4 GHz
+  if hwmode == '11g' then
+    if config.purge_txpower then
+      uci:delete('wireless', radio, 'txpower')
+    end
+
+    uci:set('wireless', radio, 'country', 'BO')
+    uci:set('wireless', radio, 'country_ie', '0')
+
+    --- get rid of 802.11b rates
+    uci:set('wireless', radio, 'supported_rates', '6000 9000 12000 18000 24000 36000 48000 54000')
+    uci:set('wireless', radio, 'basic_rate', '6000 9000 18000 36000 54000')
+
+    if channel > 7 then
+      auto_htmode = 'HT40-'
+    else
+      auto_htmode = 'HT40+'
+    end
+
+  --- band 5 GHz
+  elseif hwmode == '11a' then
+
+    --- ac devices
+    if cmd('iwinfo ' .. radio .. ' info | grep -o 802.11nac') == '802.11nac' then
+      is_ac = true
+
+      if type(config.mesh) == table and config.mesh.disable_ac then
+        uci:set('wireless', 'mesh_' .. radio, 'disabled', '1')
+      end
+      if type(config.ibss) == table and config.mesh.disable_ac then
+        uci:set('wireless', 'ibss_' .. radio, 'disabled', '1')
+      end
+    end
+
+    if channel > 39 then
+      auto_htmode = 'HT40-'
+    else
+      auto_htmode = 'HT40+'
+    end
+  else
+    auto_htmode = 'HT40'
+  end
+
+  local config_htmode
+
+  if is_ac then
+    if type(config.ac_htmode) == string then
+      htmode = config.ac_htmode
+    else
+      htmode = 'VHT80'
+    end
+  else
+    if type(config.htmode) == string then
+      config_htmode = config.htmode
+    else
+      config_htmode = 'HT40'
+    end
+  end
+
+  if config_htmode == 'HT40' then
+    htmode = auto_htmode
+  else
+    htmode = config_htmode
+  end
+
+  uci:set('wireless', radio, 'htmode', htmode)
+
+  if config.htmode_noscan then
+    uci:set('wireless', radio, 'noscan', '1')
+  end
+end
+
+util.iterate_radios(fix_radio)
+
+uci:save('wireless')
+uci:commit('wireless')
