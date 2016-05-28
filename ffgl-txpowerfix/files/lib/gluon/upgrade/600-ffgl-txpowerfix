@@ -7,22 +7,20 @@ local uci = require('luci.model.uci').cursor()
 
 local function fix_radio(radio, index, config)
   local hwmode = uci:get('wireless', radio, 'hwmode')
-  local band = '5'
+  local channel = tonumber(uci:get('wireless', radio, 'channel'))
 
-  if hwmode == '11g' or hwmode == '11ng' then
-    band = '24'
-  end
+  uci:set('wireless', radio, 'htmode', 'HT40')
+  uci:set('wireless', radio, 'noscan', '1')
 
-  local htmode = 'HT40'
+  if hwmode == '11g' then
+    if channel > 11 then
+      uci:set('wireless', radio, 'country', 'BO')
+    else
+      uci:set('wireless', radio, 'country', '00')
+    end
 
-  if type(config.htmode) == string then
-    htmode = config.htmode
-  end
+    uci:set('wireless', radio, 'country_ie', '0')
 
-  uci:set('wireless', radio, 'htmode', htmode)
-
-  if band == '24' then
-    uci:set('wireless', radio, 'country', 'BO')
     uci:set('wireless', radio, 'supported_rates', '6000 9000 12000 18000 24000 36000 48000 54000')
     uci:set('wireless', radio, 'basic_rate', '6000 9000 18000 36000 54000')
   end
