@@ -20,8 +20,8 @@ local function fix_radio(radio, index, config)
 
   --- band 2.4 GHz
   if hwmode == '11g' then
-    if config.purge_txpower then
-      uci:delete('wireless', radio, 'txpower')
+    if config.purge_txpower or uci:get('wireless', radio, 'txpower') > 20 then
+      uci:set('wireless', radio, 'txpower', '20')
     end
 
     --- set country option to Bolivia
