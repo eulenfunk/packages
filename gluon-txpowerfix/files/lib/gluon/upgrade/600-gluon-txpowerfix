@@ -16,7 +16,7 @@ local function fix_radio(radio, index, config)
   local channel = tonumber(uci:get('wireless', radio, 'channel'))
 
   local auto_htmode
-  local is_ac = false
+  local is_ac = cmd('iwinfo ' .. radio .. ' info | grep -o 802.11nac') == '802.11nac'
 
   --- band 2.4 GHz
   if hwmode == '11g' then
@@ -24,7 +24,9 @@ local function fix_radio(radio, index, config)
       uci:delete('wireless', radio, 'txpower')
     end
 
+    --- set country option to Bolivia
     uci:set('wireless', radio, 'country', 'BO')
+    --- don't tell the clients the country setting
     uci:set('wireless', radio, 'country_ie', '0')
 
     --- get rid of 802.11b rates
@@ -40,10 +42,8 @@ local function fix_radio(radio, index, config)
   --- band 5 GHz
   elseif hwmode == '11a' then
 
-    --- ac devices
-    if cmd('iwinfo ' .. radio .. ' info | grep -o 802.11nac') == '802.11nac' then
-      is_ac = true
-
+    --- disable mesh / ibss for ac devices (if configured)
+    if is_ac then
       if type(config.mesh) == table and config.mesh.disable_ac then
         uci:set('wireless', 'mesh_' .. radio, 'disabled', '1')
       end
@@ -57,7 +57,12 @@ local function fix_radio(radio, index, config)
     else
       auto_htmode = 'HT40+'
     end
+
+  --- something went wrong
   else
+
+    --- unknown channels, falling back to HT40
+    --- HT40 option is not as strict as HT40+/-
     auto_htmode = 'HT40'
   end
 
