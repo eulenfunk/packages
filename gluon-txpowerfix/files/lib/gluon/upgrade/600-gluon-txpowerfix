@@ -52,6 +52,10 @@ local function fix_radio(radio, index, config)
         if uci:get('wireless', 'ibss_' .. radio, 'disabled') == '1' and type(config.ac_htmode) == string then
           htmode = config.ac_htmode
         end
+      else
+        if type(config.ac_htmode) == string then
+          htmode = config.ac_htmode
+        end
       end
     end
   end
