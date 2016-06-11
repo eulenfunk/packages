@@ -14,8 +14,12 @@ end
 local function fix_radio(radio, index, config)
   local hwmode = uci:get('wireless', radio, 'hwmode')
   local channel = tonumber(uci:get('wireless', radio, 'channel'))
-  local htmode = config.htmode
+  local htmode = 'HT20'
   local is_ac
+
+  if type(config.htmode) == string then
+    htmode = config.htmode
+  end
 
   --- band 2.4 GHz
   if hwmode == '11g' then
@@ -41,30 +45,22 @@ local function fix_radio(radio, index, config)
 
     --- disable mesh / ibss for ac devices (if configured)
     if is_ac then
+      if type(config.ac_htmode) then
+        htmode = config.ac_htmode
+      end
+
       if type(config.mesh) == table and config.mesh.ac_disabled then
         uci:set('wireless', 'mesh_' .. radio, 'disabled', '1')
       end
 
-      if type(config.ibss) == table then
-        if config.ibss.ac_disabled then
+      if type(config.ibss) == table and config.ibss.ac_disabled then
           uci:set('wireless', 'ibss_' .. radio, 'disabled', '1')
-        end
-        if uci:get('wireless', 'ibss_' .. radio, 'disabled') == '1' and type(config.ac_htmode) == string then
-          htmode = config.ac_htmode
-        end
-      else
-        if type(config.ac_htmode) == string then
-          htmode = config.ac_htmode
         end
       end
     end
   end
 
-  if type(htmode) == string then
-    uci:set('wireless', radio, 'htmode', htmode)
-  else
-    uci:delete('wireless', radio, 'htmode')
-  end
+  uci:set('wireless', radio, 'htmode', htmode)
 
   if config.htmode_noscan then
     uci:set('wireless', radio, 'noscan', '1')

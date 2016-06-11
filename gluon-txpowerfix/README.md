@@ -26,9 +26,10 @@ The package (re)introduces serveral new and old options in the wifi sections:
 +-------------------+----------------------------+-----------------+
 |option             |possible values             |default          |
 +-------------------+----------------------------+-----------------+
-|country (2.4 only) |DE, 00, BO, (...)           |site conf regdom |
-|htmode             |HT20, HT40+, HT40-, HT40    |upstream default |
-|ac_htmode          |VHT20, VHT40, VHT80, VHT160 |upstream default |
+|country (2.4 only) |DE, 00, BO, (...)           |unchanged        |
+|htmode             |HT20, HT40+, HT40-, HT40    |HT20             |
+|ac_htmode          |HT20, HT40+, HT40-, HT40, \ |HT20             |
+|                   |VHT20, VHT40, VHT80, VHT160 |                 |
 |htmode_noscan      |true, false                 |false            |
 |purge_txpower      |true, false                 |false            |
 |mesh.ac_disabled   |true, false                 |false            |
