@@ -28,6 +28,6 @@ echo "### BatGateways"
 batctl gwl
 echo -n "### Location: Geo?:$(uci show|grep .share_location=|cut -d= -f2)"
 echo -n " lon:$(uci show|grep .longitude=|cut -d= -f2)"
-echo -n " lat:$(uci show|grep .longitude=|cut -d= -f2)"
+echo -n " lat:$(uci show|grep .latitude=|cut -d= -f2)"
 echo -n " Contact:$(uci show|grep contact|cut -d= -f2)"
 echo .
