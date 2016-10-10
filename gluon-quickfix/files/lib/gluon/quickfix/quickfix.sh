@@ -8,7 +8,7 @@
 pgrep -f autoupdater && exit 0
 
 # if the router started less than 5 minutes ago, exit
-[ $(cat /proc/uptime | sed 's/\..*//g') -gt 300 ] || exit 0
+[ $(cat /proc/uptime | sed 's/\..*//g') -gt 300 ] || exit 0 
 
 echo safety checks done, continuing...
 
@@ -23,6 +23,7 @@ echo safety checks done, continuing...
 # reboots #
 ###########
 
-# if respondd not running, reboot (probably ram was full, so more services might've crashed)
+# if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
 pgrep respondd || reboot
+pgrep dropbear || reboot
 
