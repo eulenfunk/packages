@@ -17,7 +17,7 @@ echo safety checks done, continuing...
 #########
 
 # fix dead mesh
-[ $(iw dev mesh0 station dump | wc -l) -eq 0 ] && iw dev mesh0 scan
+[ $(iw dev mesh0 station dump | wc -l) -eq 0 ] && iw dev mesh0 scan && logger -s -t "gluon-quickfix" -p 5 "no neighbours, running scan"
 
 ###########
 # reboots #
