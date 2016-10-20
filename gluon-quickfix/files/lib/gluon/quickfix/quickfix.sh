@@ -4,11 +4,16 @@
 # safety checks #
 #################
 
+safety_exit() {
+	echo safety checks failed, exiting with error code 2
+	exit 2
+}
+
 # if autoupdater is running, exit
-pgrep -f autoupdater && exit 0
+pgrep -f autoupdater >/dev/null && safety_exit
 
 # if the router started less than 5 minutes ago, exit
-[ $(cat /proc/uptime | sed 's/\..*//g') -gt 300 ] || exit 0 
+[ $(cat /proc/uptime | sed 's/\..*//g') -gt 300 ] || safety_exit
 
 echo safety checks done, continuing...
 
@@ -17,8 +22,8 @@ echo safety checks done, continuing...
 #########
 
 scan() {
-		iw dev mesh0 scan >/dev/null
-		logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
+	iw dev mesh0 scan >/dev/null
+	logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
 }
 
 OLD_NEIGHBOURS=$(cat /tmp/neighbours_mesh0 2>/dev/null)
