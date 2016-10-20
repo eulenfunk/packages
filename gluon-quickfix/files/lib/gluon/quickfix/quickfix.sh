@@ -16,7 +16,7 @@ echo safety checks done, continuing...
 # fixes #
 #########
 
-function scan {
+scan() {
 		iw dev mesh0 scan >/dev/null
 		logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
 }
@@ -36,10 +36,10 @@ done
 ###########
 
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
-pgrep respondd || reboot
-pgrep dropbear || reboot
+pgrep respondd >/dev/null || reboot
+pgrep dropbear >/dev/null || reboot
 
 # reboot if there was a kernel (batman) error
 # for an example gluon issue #910
-dmesg | grep -i "kernel bug" && reboot
+dmesg | grep -i "kernel bug" >/dev/null && reboot
 
