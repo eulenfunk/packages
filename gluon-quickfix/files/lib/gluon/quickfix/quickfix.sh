@@ -22,8 +22,8 @@ echo safety checks done, continuing...
 #########
 
 scan() {
-	iw dev mesh0 scan >/dev/null
 	logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
+	iw dev mesh0 scan >/dev/null
 }
 
 OLD_NEIGHBOURS=$(cat /tmp/neighbours_mesh0 2>/dev/null)
@@ -40,11 +40,17 @@ done
 # reboots #
 ###########
 
+reboot() {
+	logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
+	# push log to server here (nyi)
+	/sbin/reboot # comment out for debugging purposes
+}
+
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
-pgrep respondd >/dev/null || reboot
-pgrep dropbear >/dev/null || reboot
+pgrep respondd >/dev/null || reboot "respondd not running"
+pgrep dropbear >/dev/null || reboot "dropbear not running"
 
 # reboot if there was a kernel (batman) error
-# for an example gluon issue #910
-dmesg | grep -i "kernel bug" >/dev/null && reboot
+# for an example gluon issue #680
+dmesg | grep "Kernel bug" >/dev/null && reboot "gluon issue #680"
 
