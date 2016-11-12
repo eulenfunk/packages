@@ -40,17 +40,17 @@ done
 # reboots #
 ###########
 
-reboot() {
+rb() {
 	logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
 	# push log to server here (nyi)
 	/sbin/reboot # comment out for debugging purposes
 }
 
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
-pgrep respondd >/dev/null || reboot "respondd not running"
-pgrep dropbear >/dev/null || reboot "dropbear not running"
+pgrep respondd >/dev/null || rb "respondd not running"
+pgrep dropbear >/dev/null || rb "dropbear not running"
 
 # reboot if there was a kernel (batman) error
 # for an example gluon issue #680
-dmesg | grep "Kernel bug" >/dev/null && reboot "gluon issue #680"
+dmesg | grep "Kernel bug" >/dev/null && rb "gluon issue #680"
 
