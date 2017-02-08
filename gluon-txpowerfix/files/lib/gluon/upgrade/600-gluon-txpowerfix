@@ -35,10 +35,6 @@ local function fix_radio(radio, index, config)
       uci:set('wireless', radio, 'country_ie', '0')
     end
 
-    --- get rid of 802.11b rates
-    uci:set('wireless', radio, 'supported_rates', '6000 9000 12000 18000 24000 36000 48000 54000')
-    uci:set('wireless', radio, 'basic_rate', '6000 9000 18000 36000 54000')
-
   --- band 5 GHz
   elseif hwmode == '11a' then
     is_ac = cmd('iwinfo ' .. radio .. ' info | grep -o 802.11nac') == '802.11nac'
