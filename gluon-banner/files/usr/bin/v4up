@@ -1,4 +1,4 @@
 #!/bin/sh
 ping -q -w 6 -4 8.8.8.8 &>/dev/null  || udhcpc -i br-client -q -S -n
 echo -n "### IP :  "
-ifconfig |head|tail -n1
+ifconfig br-wan
