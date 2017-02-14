@@ -6,28 +6,31 @@ ip r s t all
 echo    "### from ssh : "$SSH_CONNECTION
 echo -n "### uptime :  "
 uptime
-echo -n "### pubkey :  "
-/etc/init.d/fastd show_key mesh_vpn
+[ -f /etc/init.d/fastd ] && (echo -n "### pubkey :  ";/etc/init.d/fastd show_key mesh_vpn)
+[ -f /etc/init.d/tunneldigger ] && (echo -n "### tunneldigger :  ";ps|grep tunneldigger|head -1|cut -c 27-)
 echo -n "### firmware :  "
 cat /lib/gluon/release
+echo -n "### kernel :  "
+cat /proc/version
 echo -n "### hardware :  "
-cat /tmp/sysinfo/model
+cat  /proc/cpuinfo|grep cpu\ model
 echo -n "### Radio-Networks acitve:"
 iwinfo
 echo -n "### connected to this node  :  "
 batctl tl |grep W |wc -l
 echo -n "### number of total clients :    "
 batctl tg |grep W |wc -l
-echo -n "### Mesh: MoL:$(uci get -q network.mesh_lan.auto)"
-echo -n " MoW:$(uci get -q network.mesh_wan.auto)"
-echo " Fastd:$(uci get -q fastd.mesh_vpn.enabled)"
+echo -n "### Mesh: MoL:$(uci show|grep mesh_lan.auto|cut -d= -f2)"
+echo -n " MoW:$(uci show|grep mesh_wan.auto|cut -d= -f2)"
+echo -n " HopPenalty:'$(cat /sys/class/net/bat0/mesh/hop_penalty)'"
+echo " Fastd:$(uci show|grep fastd.mesh_vpn.enabled|cut -d= -f2)"
 echo "### BatIFs:"
 batctl if
 echo "batctl gw :     " $(batctl gw)
 echo "### BatGateways"
 batctl gwl
-echo -n "### Location: Geo?:$(uci get -q gluon-node-info.@location[0].share_location)"
-echo -n " lon:$(uci get -q gluon-node-info.@location[0].longitude)"
-echo -n " lat:$(uci get -q gluon-node-info.@location[0].latitude)"
-echo -n " Contact:$(uci get -q gluon-node-info.@owner[0].contact)"
+echo -n "### Location: Geo?:$(uci show|grep .share_location=|cut -d= -f2)"
+echo -n " lon:$(uci show|grep .longitude=|cut -d= -f2)"
+echo -n " lat:$(uci show|grep .longitude=|cut -d= -f2)"
+echo -n " Contact:$(uci show|grep contact|cut -d= -f2)"
 echo .
