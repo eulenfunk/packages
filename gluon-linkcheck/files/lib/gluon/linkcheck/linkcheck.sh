@@ -42,7 +42,7 @@ upgrade_started='/tmp/autoupdate.lock'
 linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
 for batm in $batmeshs; do
-  result=$(batctl o|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  result=$(batctl o|grep "^\ \*"|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
   check=$batm
   wert=$result
   valuecheck $check
