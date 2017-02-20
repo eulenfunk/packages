@@ -9,7 +9,7 @@ uptime
 [ -f /etc/init.d/fastd ] && (echo -n "### pubkey :  ";/etc/init.d/fastd show_key mesh_vpn)
 [ -f /etc/init.d/tunneldigger ] && (echo -n "### tunneldigger :  ";ps|grep tunneldigger|head -1|cut -c 27-)
 echo -n "### firmware :  "
-echo  $(uci show|grep autoupdater.settings.branch|cut -d"=" -f2) '$(cat /lib/gluon/release)' Autoupdater=$(uci show|grep autoupdater.settings.enabled|cut -d"=" -f2) 
+echo  $(uci show|grep autoupdater.settings.branch|cut -d"=" -f2) \'$(cat /lib/gluon/release)\' Autoupdater=$(uci show|grep autoupdater.settings.enabled|cut -d"=" -f2) 
 cat /lib/gluon/release
 echo -n "### kernel :  "
 cat /proc/version
