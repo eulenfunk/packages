@@ -10,7 +10,6 @@ uptime
 [ -f /etc/init.d/tunneldigger ] && (echo -n "### tunneldigger :  ";ps|grep tunneldigger|head -1|cut -c 27-)
 echo -n "### firmware :  "
 echo  $(uci show|grep autoupdater.settings.branch|cut -d"=" -f2) \'$(cat /lib/gluon/release)\' Autoupdater=$(uci show|grep autoupdater.settings.enabled|cut -d"=" -f2) 
-cat /lib/gluon/release
 echo -n "### kernel :  "
 cat /proc/version
 echo -n "### hardware :  "
