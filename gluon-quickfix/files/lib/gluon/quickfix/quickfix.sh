@@ -14,8 +14,8 @@ safety_exit() {
 # if autoupdater is running, exit
 pgrep -f autoupdater >/dev/null && safety_exit
 
-# if the router started less than 5 minutes ago, exit
-[ $(cat /proc/uptime | sed 's/\..*//g') -gt 300 ] || safety_exit
+# if the router started less than 10 minutes ago, exit
+[ $(cat /proc/uptime | sed 's/\..*//g') -gt 600 ] || safety_exit
 
 echo safety checks done, continuing...
 
@@ -42,16 +42,17 @@ done
 # reboots #
 ###########
 
-reboot() {
+_reboot() {
 	logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
 	# push log to server here (nyi)
-	/sbin/reboot # comment out for debugging purposes
+	# only reboot if the router started less than 1 hour ago
+	[ $(cat /proc/uptime | sed 's/\..*//g') -gt 3600 ] || /sbin/reboot # comment out for debugging purposes
 }
 
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
-pgrep respondd >/dev/null || reboot "respondd not running"
-pgrep dropbear >/dev/null || reboot "dropbear not running"
+pgrep respondd >/dev/null || _reboot "respondd not running"
+pgrep dropbear >/dev/null || _reboot "dropbear not running"
 
 # reboot if there was a kernel (batman) error
 # for an example gluon issue #680
-dmesg | grep "Kernel bug" >/dev/null && reboot "gluon issue #680"
+dmesg | grep "Kernel bug" >/dev/null && _reboot "gluon issue #680"
