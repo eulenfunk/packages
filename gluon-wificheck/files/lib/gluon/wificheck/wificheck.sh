@@ -21,7 +21,8 @@ if [ -z "$mname" ] ; then
         if [ -f /tmp/wifipbflag2 ] ; then
           logger -s -t "gluon-wificheck" -p 5 "2nd time no wifi neighbours, rebooting!"
           sleep 3
-          reboot -f
+          # don't reboot during the first hour
+          [ $(cat /proc/uptime | sed 's/\..*//g') -gt 3600 ] || reboot -f
          else
           logger -s -t "gluon-wificheck" -p 5 "still no wifi neighbours."
           echo 1>/tmp/wifipbflag2
