@@ -15,7 +15,8 @@ export PS1='\u@\h:\w\$ '
 [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
 batctl gwl
 echo firmware:  $(uci show|grep autoupdater.settings.branch|cut -d"=" -f2) \'$(cat /lib/gluon/release)\' Autoupdater=$(uci show|grep autoupdater.settings.enabled|cut -d"=" -f2) 
-echo r0$(uci show|grep wireless.radio0.disabled|cut -d"=" -f2)|sed -e "s/r0'1'/ch2.4_OFF/"|sed -e "s/r0.*/ch2.4_ON/" ch2.4=$(uci show|grep radio0_channel|cut -d"=" -f2) TX=$(uci show|grep wireless.radio0.htmode|cut -d"=" -f2)/$(uci show|grep wireless.radio0.txpower=|cut -d"=" -f2) wifimesh-off=$(uci show|grep wireless.mesh_radio0.disabled|cut -d"=" -f2) ap-off=$(uci show|grep wireless.client_radio0.disabled|cut -d"=" -f2) ch5=$(uci show|grep radio1_channel|cut -d"=" -f2)
+echo -n r0$(uci show|grep wireless.radio0.disabled|cut -d"=" -f2)|sed -e "s/r0'1'/ch2.4_OFF /"|sed -e "s/r0.*/ch2.4_ON /"
+echo ch2.4=$(uci show|grep radio0_channel|cut -d"=" -f2) TX=$(uci show|grep wireless.radio0.htmode|cut -d"=" -f2)/$(uci show|grep wireless.radio0.txpower=|cut -d"=" -f2) wifimesh-off=$(uci show|grep wireless.mesh_radio0.disabled|cut -d"=" -f2) ap-off=$(uci show|grep wireless.client_radio0.disabled|cut -d"=" -f2) ch5=$(uci show|grep radio1_channel|cut -d"=" -f2)
 echo    "########################################"
 
 # just some handy aliases
