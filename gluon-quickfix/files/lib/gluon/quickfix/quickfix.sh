@@ -25,7 +25,7 @@ echo safety checks done, continuing...
 
 scan() {
 	logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
-	iw dev $DEV scan >/dev/null
+	iw dev $DEV scan lowpri passive>/dev/null
 }
 
 OLD_NEIGHBOURS=$(cat /tmp/mesh_neighbours 2>/dev/null)
