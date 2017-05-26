@@ -38,11 +38,16 @@ valuecheck ()
 
 upgrade_started='/tmp/autoupdate.lock'
 [ -f $upgrade_started ] && exit
-
+batversion=$(batctl -v |cut -d" " -f 2|tr -d '.')
 linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
 for batm in $batmeshs; do
-  result=$(batctl o|grep "^\ \*"|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  if [ $batversion -gt 20163 ] ; then
+   result=$(batctl o|grep "^\ \*"|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  else
+   result=$(batctl o|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+  fi
+
   check=$batm
   wert=$result
   valuecheck $check
@@ -56,10 +61,11 @@ for link in $links; do
     linknames="$linknames $linkname"
   fi
 done
+
 for linkname in $linknames; do
   wadhoc=$(iw dev $linkname scan lowpri passive|grep $linkname|wc -l)
   sleep 8 # this is a hack
-  bssid=$(uci get wireless.ibss_radio0.bssid)
+  bssid=$(uci get wireless.mesh_radio0.mesh_id)
   neighbours=$(iw dev $linkname scan lowpri passive|grep $bssid|wc -l)
   checks="neighbours wadhoc"
   for check in $checks; do
