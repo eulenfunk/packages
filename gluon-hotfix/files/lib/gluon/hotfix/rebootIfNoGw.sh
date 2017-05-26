@@ -7,7 +7,7 @@ batctl gwl | grep -q "No gateways in range"
 if [ $? == 0 ] ; then
   if [ -f /tmp/gw ] ; then
     if [ -f /tmp/gwgone.3 ] ; then
-      if [ -f $upgrade_started ] && exit
+      [ -f $upgrade_started ] && exit
       securereboot
     elif [ -f /tmp/gwgone.2 ] ; then
       touch /tmp/gwgone.3
@@ -32,7 +32,7 @@ if [ "$returnval" -ne 0 ] || [ -z "$ipv6_subnet" ]; then
   if [ -f /tmp/ip6anycast ] ; then
     logger "IPv6 Anycast-IP NOT reachable."
     if [ -f /tmp/ip6anycastgone.3 ] ; then
-      if [ -f $upgrade_started ] && exit
+      [ -f $upgrade_started ] && exit
       securereboot
       exit 0
     elif [ -f /tmp/ip6anycastgone.3 ] ; then
@@ -56,7 +56,7 @@ if [ "$?" -eq 0 ] ; then
   (iw dev > /dev/null && touch /tmp/wifi.running || if [ "$?" -eq 127 ]; then touch /tmp/wifi.running; fi ) &
   sleep 30
   if [ ! -f /tmp/wifi.running ]; then
-    if [ -f $upgrade_started ] && exit
-     securereboot
+    [ -f $upgrade_started ] && exit
+    securereboot
   fi
 fi
