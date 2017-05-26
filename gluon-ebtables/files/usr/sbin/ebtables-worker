@@ -1,0 +1,88 @@
+#!/usr/bin/lua
+
+local nixio = require('nixio')
+
+local workerdir = "/lib/gluon/ebtables-worker"
+local workerlock = "/tmp/run/ebtables-worker.lock"
+local initlock = "/tmp/run/ebtables-init.lock"
+
+local pid = nixio.getpid()
+
+local function try_get_lock()
+	if nixio.fs.access(initlock, "f") then
+		print("Error: Ebtables initialization in progress")
+		return false
+	end
+
+	if not nixio.fs.mkdir(workerlock .. "." .. pid) then
+		print("Error: Cannot create private worker lock directory")
+		return false
+	end
+
+	local pidfd = io.open(workerlock .. "." .. pid .. "/pid", "w")
+	pidfd:write(pid .. "\n")
+	pidfd:close()
+
+	if not nixio.fs.rename(workerlock .. "." .. pid, workerlock) then
+		print("Error: A worker is already running")
+		nixio.fs.remove(workerlock .. "." .. pid)
+		return false
+	end
+
+	return true
+end
+
+local function get_lock()
+	if not try_get_lock() then
+		os.exit(1)
+	end
+end
+
+local function try_put_lock()
+	if not nixio.fs.rename(workerlock, workerlock .. "." .. pid) then
+		print("Error: Could not remove worker lock (1)")
+		return false
+	end
+
+	if not nixio.fs.remove(workerlock .. "." .. pid .. "/pid") then
+		print("Error: Could not remove worker lock (2)")
+		return false
+	end
+
+	if not nixio.fs.rmdir(workerlock .. "." .. pid) then
+		print("Error: Could not remove worker lock (3)")
+		return false
+	end
+
+	return true
+end
+
+local function put_lock()
+	if not try_put_lock() then
+		os.exit(2)
+	end
+end
+
+local function worker_loop()
+	for e in nixio.fs.dir(workerdir) do
+		local f = workerdir .. "/" .. e
+
+		if nixio.fs.access(f, "x") and
+		   nixio.fs.stat(f).type ~= "dir" then
+			print("+++ Running: " .. f)
+			os.execute(f)
+		end
+	end
+end
+
+local function worker()
+	nixio.setenv("EBTABLES_ATOMIC_FILE", "/tmp/.ebtables-worker.tmp")
+	os.execute("ebtables --atomic-save")
+	worker_loop()
+	os.execute("ebtables --atomic-commit")
+end
+
+-- Main
+get_lock()
+worker()
+put_lock()
