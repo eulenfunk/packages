@@ -17,7 +17,7 @@ if [ "$?" -eq 0 ] ; then
     unset CLIENT_MACS SEDDEV
 
     if [ "$clients" -eq "0" ]; then
-      [ -f $upgrade_started ] && exit
+      if [ -f $upgrade_started ] && exit
       securereboot 
     fi  
   fi
