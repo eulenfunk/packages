@@ -16,19 +16,14 @@ safety_exit() {
 pgrep -f autoupdater >/dev/null && safety_exit
 [ -f $upgrade_started ] && safety_exit
 
-# if the router started less than 10 minutes ago, exit
-[ $(cat /proc/uptime | sed 's/\..*//g') -gt 600 ] || safety_exit
+# if the router started less than 40 minutes ago, exit
+[ $(cat /proc/uptime | sed 's/\..*//g') -gt 2400 ] || safety_exit
 
 echo safety checks done, continuing...
 
 #########
 # fixes #
 #########
-
-scan() {
-	logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
-	iw dev $DEV scan lowpri passive>/dev/null
-}
 
 OLD_NEIGHBOURS=$(cat /tmp/mesh_neighbours 2>/dev/null)
 NEIGHBOURS=$(iw dev $DEV station dump | grep -e "^Station " | awk '{ print $2 }')
@@ -49,7 +44,7 @@ _reboot() {
 	logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
 	# push log to server here (nyi)
 	# only reboot if the router started less than 1 hour ago
-	[ $(cat /proc/uptime | sed 's/\..*//g') -gt 1800 ] || reboot -f # comment out for debugging purposes
+	[ $(cat /proc/uptime | sed 's/\..*//g') -gt 2400 ] || reboot -f # comment out for debugging purposes
 }
 
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
