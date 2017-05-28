@@ -1,0 +1,9 @@
+#!/bin/sh
+#watchdog which inits a reboot if sysupgrade is stuck
+echo starting 99watchdog
+logger starting 99watchdog
+(trap "echo ignoring SIGHUP" 1 
+ trap "echo ignoring SIGINT" 2
+ trap "echo ignoring SIGTERM" 15 
+ trap "echo ignoring SIGKILL" 9 
+ sleep 500; sleep 400; sleep 300; sleep 200;reboot&>/dev/null;reboot)&
