@@ -1,7 +1,7 @@
 #!/bin/sh
 
 safety_exit() {
-        echo safety checks failed, exiting with error code 2
+        logger -s -t "gluon-quickfix" "safety checks failed $@, exiting with error code 2"
         exit 2
 }
 
@@ -18,7 +18,7 @@ now_reboot() {
 
 
 # if the router started less than 10 minutes ago, exit
-[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "60" ] || safety_exit
+[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "60" ] || safety_exit "uptime low!"
 
 # if autoupdater is running less than 60 minutes, exit. otherwise emergency-reboot
 UPGRADESTARTED='/tmp/autoupdate.lock'
@@ -29,7 +29,7 @@ if [ -f $UPGRADESTARTED ] ; then
   if [ "$MAXAGE" -gt "$LOCKAGE" ] ; then
     now_reboot "stale autoupdate.lock file"
    fi
-  safety_exit
+  safety_exit "autoupdate running"
  fi
 
 echo safety checks done, continuing...
@@ -53,9 +53,6 @@ if [ "$(uci get wireless.radio0)" == "wifi-device" ] && [ ! "$(uci show|grep wir
   sleep 20
   [ $(cat /tmp/iwdev.log|wc -l) -eq 0 ] && now_reboot "iw dev freezes"
  fi
-
-
-
 
 DEV="$(iw dev|grep Interface|grep -e 'mesh0' -e 'ibss0'| awk '{ print $2 }'|head -1)"
 
