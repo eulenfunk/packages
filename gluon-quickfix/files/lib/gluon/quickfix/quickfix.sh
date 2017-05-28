@@ -39,7 +39,7 @@ echo safety checks done, continuing...
 dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 
 #zu viele Tunneldigger
-[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "2" ] && now_reboot "zu viele Tunneldigger-Restarts"
+[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "7" ] && now_reboot "zu viele Tunneldigger-Restarts"
 
 pgrep respondd >/dev/null || now_reboot "respondd not running"
 pgrep dropbear >/dev/null || now_reboot "dropbear not running"
