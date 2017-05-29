@@ -38,8 +38,8 @@ echo safety checks done, continuing...
 # for an example gluon issue #680
 dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 
-#zu viele Tunneldigger
-[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "7" ] && now_reboot "zu viele Tunneldigger-Restarts"
+#zu viele Tunneldigger - muss dringend woanders gefixt werden, aber besser so als anders...
+[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
 
 pgrep respondd >/dev/null || now_reboot "respondd not running"
 pgrep dropbear >/dev/null || now_reboot "dropbear not running"
