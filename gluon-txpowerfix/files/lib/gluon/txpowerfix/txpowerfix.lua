@@ -62,8 +62,7 @@ maximumTxPowerDb = tonumber(maximumTxPowerDb)
 if maximumTxPowerDb < 30 then
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | wc -l')
         maximumTxPower = string.gsub(t, "\n", "")
----         maximumTxPower = tonumber(maximumTxPower)-1
-        maximumTxPower = tonumber(maximumTxPower)-2
+        maximumTxPower = tonumber(maximumTxPower)-1
 else
 ---        t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | grep -n "20 dBm" | cut -f1 -d\':\'')
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | grep -n "19 dBm" | cut -f1 -d\':\'')
