@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+boot() {
+if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then 
+  /lib/gluon/txpowerfix/txpowerfix.lua
+  logger -s -t "gluon-txpowerfix" -p 5 "txpowerfix executed once, delete self."
+  echo "txpowerfix executed once, delete self." >/tmp/txpowerfix.done
+  rm /etc/init.d/txpowerfix
+  (sleep 10; rm /etc/rc.d/S99txpowerfix)&
+ fi
+}
+
+start() {
+if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then 
+  /lib/gluon/txpowerfix/txpowerfix.lua
+  logger -s -t "gluon-txpowerfix" -p 5 "txpowerfix executed once, delete self."
+  echo "txpowerfix executed once, delete self." >/tmp/txpowerfix.done
+  rm /etc/init.d/txpowerfix
+  (sleep 10; rm /etc/rc.d/S99txpowerfix)&
+ fi
+}
