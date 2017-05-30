@@ -16,9 +16,8 @@ now_reboot() {
         logger -s -t "gluon-quickfix" -p 5 "AprilApril! Nicht während der ersten 60 Minuten nach dem Boot!"
 }
 
-
 # if the router started less than 10 minutes ago, exit
-[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "60" ] || safety_exit "uptime low!"
+[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "600" ] || safety_exit "uptime low!"
 
 # if autoupdater is running less than 60 minutes, exit. otherwise emergency-reboot
 UPGRADESTARTED='/tmp/autoupdate.lock'
@@ -41,9 +40,9 @@ dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 #zu viele Tunneldigger - muss dringend woanders gefixt werden, aber besser so als anders...
 [ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
 
-pgrep respondd >/dev/null || now_reboot "respondd not running"
-pgrep dropbear >/dev/null || now_reboot "dropbear not running"
-
+#give it time to respawn 
+pgrep respondd >/dev/null || sleep 20; pgrep respondd >/dev/null || now_reboot "respondd not running"
+pgrep dropbear >/dev/null || sleep 20; pgrep dropbear >/dev/null || now_reboot "dropbear not running"
 
 if [ "$(uci get wireless.radio0)" == "wifi-device" ] && [ ! "$(uci show|grep wireless.radio0.disabled|cut -d= -f2|tr -d \')" == "1" ] ; then
   echo has wifi enabled
