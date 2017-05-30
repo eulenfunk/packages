@@ -1,7 +1,7 @@
 #!/bin/sh
 
 safety_exit() {
-        echo safety checks failed, exiting with error code 2
+        logger -s -t "gluon-quickfix" "safety checks failed $@, exiting with error code 2"
         exit 2
 }
 
@@ -18,7 +18,7 @@ now_reboot() {
 
 
 # if the router started less than 10 minutes ago, exit
-[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "600" ] || safety_exit
+[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "60" ] || safety_exit "uptime low!"
 
 # if autoupdater is running less than 60 minutes, exit. otherwise emergency-reboot
 UPGRADESTARTED='/tmp/autoupdate.lock'
@@ -29,22 +29,29 @@ if [ -f $UPGRADESTARTED ] ; then
   if [ "$MAXAGE" -gt "$LOCKAGE" ] ; then
     now_reboot "stale autoupdate.lock file"
    fi
-  safety_exit
+  safety_exit "autoupdate running"
  fi
-  
+
 echo safety checks done, continuing...
 
 # reboot if there was a kernel (batman) error
 # for an example gluon issue #680
 dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 
-if [ "$(uci get wireless.radio0)" == "wifi-device" ] && [ "$(uci show|grep wireless.radio0.disabled|cut -d\"=\" -f2)|sed -e \"s/r0'1'/OFF/\")" != "OFF" ]  ; then
+#zu viele Tunneldigger - muss dringend woanders gefixt werden, aber besser so als anders...
+[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
+
+pgrep respondd >/dev/null || now_reboot "respondd not running"
+pgrep dropbear >/dev/null || now_reboot "dropbear not running"
+
+
+if [ "$(uci get wireless.radio0)" == "wifi-device" ] && [ ! "$(uci show|grep wireless.radio0.disabled|cut -d= -f2|tr -d \')" == "1" ] ; then
   echo has wifi enabled
   # check for hanging iw
   [ -f /tmp/iwdev.log ] && rm /tmp/iwdev.log
   iw dev>/tmp/iwdev.log &
   sleep 20
-  [ $(cat/tmp/iwdev.log|wc -l) -eq 0 ] && now_reboot "iw dev freezes"
+  [ $(cat /tmp/iwdev.log|wc -l) -eq 0 ] && now_reboot "iw dev freezes"
  fi
 
 DEV="$(iw dev|grep Interface|grep -e 'mesh0' -e 'ibss0'| awk '{ print $2 }'|head -1)"
@@ -64,5 +71,3 @@ do
         echo $NEIGHBOURS | grep $NEIGHBOUR >/dev/null || (scan; break)
 done
 
-pgrep respondd >/dev/null || now_reboot "respondd not running"
-pgrep dropbear >/dev/null || now_reboot "dropbear not running"
