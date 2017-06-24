@@ -40,7 +40,13 @@ dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 #zu viele Tunneldigger - muss dringend woanders gefixt werden, aber besser so als anders...
 [ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
 
-#give it time to respawn 
+# br-client ipv6-adresse aus dem site.conf-prefix (cc-netif-problem)
+brc6=$(ip -6 a s dev br-client | awk '/inet6/ { print $2 }'|cut -b1-9 |grep -c  $(uci get network.local_node_route6.target 2>/dev/null|cut -b1-9) 2>/dev/nul)
+if [ "$brc6" == "0" ] ; then
+  now_reboot "br-client without ipv6 in prefix-range (probably none)"
+ fi
+
+#service checks
 pgrep respondd >/dev/null || sleep 20; pgrep respondd >/dev/null || now_reboot "respondd not running"
 pgrep dropbear >/dev/null || sleep 20; pgrep dropbear >/dev/null || now_reboot "dropbear not running"
 
