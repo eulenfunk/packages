@@ -26,9 +26,9 @@ endef
 
 define Package/gluon-hotfix/install
 	$(CP) ./files/* $(1)/
-	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/rebootIfNoWifiClients.sh
-	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/rebootIfNoGw.sh
-	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/fixbat0br.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/rebootIfNoWifiClients.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/rebootIfNoGw.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/fixbat0br.sh
 endef
 
 $(eval $(call BuildPackage,gluon-hotfix))
