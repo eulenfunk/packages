@@ -26,6 +26,7 @@ endef
 
 define Package/gluon-ssid-changer/install
         $(CP) ./files/* $(1)/
+        ./gluonShellDiet.sh $(1)/lib/gluon/ssid-changer/ssid-changer.sh
 endef
 
 $(eval $(call BuildPackage,gluon-ssid-changer))

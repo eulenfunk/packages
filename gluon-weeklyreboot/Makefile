@@ -26,6 +26,7 @@ endef
 
 define Package/gluon-weeklyreboot/install
         $(CP) ./files/* $(1)/
+        ./gluonShellDiet.sh $(1)/lib/gluon/weeklyreboot/weeklyreboot.sh
 endef
 
 $(eval $(call BuildPackage,gluon-weeklyreboot))

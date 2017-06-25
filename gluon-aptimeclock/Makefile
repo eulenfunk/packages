@@ -26,6 +26,7 @@ endef
 
 define Package/gluon-aptimeclock/install
         $(CP) ./files/* $(1)/
+        ./gluonShellDiet.sh $(1)/lib/gluon/aptimeclock/aptimeclock.sh
 endef
 
 $(eval $(call BuildPackage,gluon-aptimeclock))

@@ -26,6 +26,7 @@ endef
 
 define Package/gluon-linkcheck/install
         $(CP) ./files/* $(1)/
+	./gluonShellDiet.sh $(1)/lib/gluon/linkcheck/linkcheck.sh
 endef
 
 $(eval $(call BuildPackage,gluon-linkcheck))
