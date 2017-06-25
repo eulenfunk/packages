@@ -25,10 +25,10 @@ define Build/Compile
 endef
 
 define Package/gluon-hotfix/install
-        $(CP) ./files/* $(1)/
-        ./gluonShellDiet.sh $(1)/lib/gluon/rebootIfNoWifiClients.sh
-        ./gluonShellDiet.sh $(1)/lib/gluon/rebootIfNoGw.sh
-        ./gluonShellDiet.sh $(1)/lib/gluon/fixbat0br.sh
+	$(CP) ./files/* $(1)/
+	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/rebootIfNoWifiClients.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/rebootIfNoGw.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/gluon-hotfix/fixbat0br.sh
 endef
 
 $(eval $(call BuildPackage,gluon-hotfix))

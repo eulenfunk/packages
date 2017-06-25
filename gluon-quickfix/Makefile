@@ -26,7 +26,7 @@ endef
 
 define Package/gluon-quickfix/install
         $(CP) ./files/* $(1)/
-        ./gluonShellDiet.sh $(1)/lib/gluon/quickfix/quickfix.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/quickfix/quickfix.sh
 endef
 
 $(eval $(call BuildPackage,gluon-quickfix))

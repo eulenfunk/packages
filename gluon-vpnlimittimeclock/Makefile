@@ -26,7 +26,7 @@ endef
 
 define Package/gluon-vpnlimittimeclock/install
         $(CP) ./files/* $(1)/
-        ./gluonShellDiet.sh $(1)/lib/gluon/vpnlimittimeclock/vpnlimittimeclock.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/vpnlimittimeclock/vpnlimittimeclock.sh
 endef
 
 $(eval $(call BuildPackage,gluon-vpnlimittimeclock))
