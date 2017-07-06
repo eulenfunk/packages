@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
-site = require("gluon.site_config")
-uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 --- wrapper for calling systemcommands
 function cmd(_command)
