@@ -36,7 +36,7 @@ end
 --- determine country
 channel = uci:get('wireless', interface24, 'channel')
 if channel == '13' then
-        country = 'DE'
+        country = 'US'
 elseif channel == '12' then
         country = 'DE'
 else
