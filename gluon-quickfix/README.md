@@ -1,6 +1,8 @@
 # gluon-quickfix
 
 This package will add a cronjob that fixes some problems that rarely occur, but are easy to work around. 
+(this branch "v2016.2.x" is the one used to build against gluon "v2016.2.x" by ffdus)
+
 the condition are checked every 7 minutes:
 
 ### Safety checks:
@@ -18,6 +20,7 @@ what is checked:
 - check if we have lost any neighbours, `iw dev $DEV scan` in lowpri mode.
 - if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
 - reboot if there was a kernel (batman) error
+- reboot if there are ath/ksoftirq-malloc-errors (upcoming oom scenario)
 - if wifi is configured and not disabled: do 'iw dev'. If this does not return (process hangs) or delivers no result: reboot
 - if autoupdater is running for more than an hour and no progress visible: reboot.
 - if more than 8 tunneldigger-threads running: reboot. System is definitly clogged up and reboot is the fastest and most reliable way out of this rare (but load-effective) scenario. 
