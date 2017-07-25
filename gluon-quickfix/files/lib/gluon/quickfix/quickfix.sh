@@ -52,9 +52,7 @@ if [ "$(uci get wireless.radio0)" == "wifi-device" ] ; then
       iw dev>/tmp/iwdev.log &
       sleep 20
       [ $(cat /tmp/iwdev.log|wc -l) -eq 0 ] && now_reboot "iw dev freezes or radio0 misconfigured"
-
       DEV="$(iw dev|grep Interface|grep -e 'mesh0' -e 'ibss0'| awk '{ print $2 }'|head -1)"
-
       scan() {
         logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
         iw dev $DEV scan lowpri passive>/dev/null
