@@ -1,4 +1,5 @@
 #!/bin/sh
+# cc0, maintained by adorfer@nadeshda.org 
 
 safety_exit() {
         logger -s -t "gluon-quickfix" "safety checks failed $@, exiting with error code 2"
