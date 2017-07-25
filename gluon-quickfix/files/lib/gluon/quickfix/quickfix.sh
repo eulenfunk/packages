@@ -30,6 +30,8 @@ if [ -f $UPGRADESTARTED ] ; then
 echo safety checks done, continuing...
 
 dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
+dmesg | grep ath | grep "alloc of size" | grep "failed" && now_reboot "ath0 malloc fail"
+dmesg | grep "ksoftirqd" | grep "page allcocation failure" && now_reboot "kernel malloc fail"
 
 [ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
 
