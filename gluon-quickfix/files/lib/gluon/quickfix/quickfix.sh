@@ -1,4 +1,5 @@
 #!/bin/sh
+# maintained by petabyteboy
 
 DEV="$(iw dev|grep Interface|grep -e 'mesh0' -e 'ibss0'| awk '{ print $2 }'|head -1)"
 
