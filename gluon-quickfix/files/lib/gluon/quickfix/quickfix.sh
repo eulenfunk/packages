@@ -1,53 +1,60 @@
 #!/bin/sh
 # cc0, maintained by adorfer@nadeshda.org 
 
+# wait 60 minutes if autoupdater is running
+UPDATEWAIT='60'
+
 safety_exit() {
-        logger -s -t "gluon-quickfix" "safety checks failed $@, exiting with error code 2"
-        exit 2
+  logger -s -t "gluon-quickfix" "safety checks failed $@, exiting with error code 2"
+  exit 2
 }
 
 now_reboot() {
-        logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
-        if [ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "3600" ] ; then
-          echo rebooting
-          /sbin/reboot -f
-         fi
-        logger -s -t "gluon-quickfix" -p 5 "AprilApril! Nicht während der ersten 60 Minuten nach dem Boot!"
+  logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
+  if [ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "3600" ] ; then
+    echo rebooting
+    /sbin/reboot -f
+  fi
+  logger -s -t "gluon-quickfix" -p 5 "no reboot during first hour"
 }
 
+# don't do anything the first 10 minutes
 [ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "600" ] || safety_exit "uptime low!"
 
-UPGRADESTARTED='/tmp/autoupdate.lock'
-if [ -f $UPGRADESTARTED ] ; then
-  UPDATEWAIT='60'
+# stale autoupdater
+if [ -f /tmp/autoupdate.lock ] ; then
   MAXAGE=$(($(date +%s)-60*${UPDATEWAIT}))
   LOCKAGE=$(date -r /tmp/autoupdate.lock +%s)
   if [ "$MAXAGE" -gt "$LOCKAGE" ] ; then
     now_reboot "stale autoupdate.lock file"
-   fi
+  fi
   safety_exit "autoupdate running"
  fi
 
 echo safety checks done, continuing...
 
+# batman-adv crash when removing interface in certain configurations
 dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
 dmesg | grep ath | grep "alloc of size" | grep "failed" && now_reboot "ath0 malloc fail"
 dmesg | grep "ksoftirqd" | grep "page allcocation failure" && now_reboot "kernel malloc fail"
 
-[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "zu viele Tunneldigger-Restarts"
+# too many tunneldigger restarts
+[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "too many Tunneldigger-Restarts"
 
+# br-client without ipv6 in prefix-range
 brc6=$(ip -6 a s dev br-client | awk '/inet6/ { print $2 }'|cut -b1-9 |grep -c $(cat /lib/gluon/site.json|tr "," "\n"|grep \"prefix6\"|cut -d: -f2-3|cut -b2-10) 2>/dev/nul)
-if [ "$brc6" == "0" ] ; then
+if [ "$brc6" == "0" ]; then
   now_reboot "br-client without ipv6 in prefix-range (probably none)"
- fi
+fi
 
+# respondd or dropbear not running
 pgrep respondd >/dev/null || sleep 20; pgrep respondd >/dev/null || now_reboot "respondd not running"
 pgrep dropbear >/dev/null || sleep 20; pgrep dropbear >/dev/null || now_reboot "dropbear not running"
 
-# radio0_check
-if [ "$(uci get wireless.radio0)" == "wifi-device" ] ; then
-  if [ ! "$(uci show|grep wireless.radio0.disabled|cut -d= -f2|tr -d \')" == "1" ] ; then
-   if ! [[  "$(uci show|grep wireless.mesh_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  &&  "$(uci show|grep wireless.client_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  ]] ; then
+# radio0_check for lost neighbours
+if [ "$(uci get wireless.radio0)" == "wifi-device" ]; then
+  if [ ! "$(uci show|grep wireless.radio0.disabled|cut -d= -f2|tr -d \')" == "1" ]; then
+    if ! [[  "$(uci show|grep wireless.mesh_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  &&  "$(uci show|grep wireless.client_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  ]]; then
       echo has radio0 enabled
       [ -f /tmp/iwdev.log ] && rm /tmp/iwdev.log
       iw dev>/tmp/iwdev.log &
@@ -57,14 +64,13 @@ if [ "$(uci get wireless.radio0)" == "wifi-device" ] ; then
       scan() {
         logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
         iw dev $DEV scan lowpri passive>/dev/null
-        }
+      }
       OLD_NEIGHBOURS=$(cat /tmp/mesh_neighbours 2>/dev/null)
       NEIGHBOURS=$(iw dev $DEV station dump | grep -e "^Station " | awk '{ print $2 }')
       echo $NEIGHBOURS > /tmp/mesh_neighbours
-      for NEIGHBOUR in $OLD_NEIGHBOURS
-      do
+      for NEIGHBOUR in $OLD_NEIGHBOURS; do
         echo $NEIGHBOURS | grep $NEIGHBOUR >/dev/null || (scan; break)
       done
-     fi
-   fi
- fi
+    fi
+  fi
+fi
