@@ -47,7 +47,7 @@ _reboot() {
 	logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
 	# push log to server here (nyi)
 	# only reboot if the router started less than 1 hour ago
-	[ $(cat /proc/uptime | sed 's/\..*//g') -gt 1800 ] || /sbin/reboot # comment out for debugging purposes
+	[ $(cat /proc/uptime | sed 's/\..*//g') -lt 1800 ] || /sbin/reboot # comment out for debugging purposes
 }
 
 # if respondd or dropbear not running, reboot (probably ram was full, so more services might've crashed)
