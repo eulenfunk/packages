@@ -10,67 +10,85 @@ safety_exit() {
 }
 
 now_reboot() {
-  logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $@"
-  if [ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "3600" ] ; then
-    echo rebooting
+  # first parameter message
+  # second optional -f to force reboot even if autoupdater is running
+  logger -s -t "gluon-quickfix" -p 5 "rebooting... reason: $1"
+  if [ "$(sed 's/\..*//g' /proc/uptime)" -gt "3600" ] ; then
+    LOG=/lib/gluon/quickfix/reboot.log
+    # the first 5 times log the reason for a reboot in a file that is rebootsave
+    [ "$(wc -l < $LOG)" -gt 5 ] || echo "$(date) $1" >> $LOG
+    if [ "$2" != "-f" ] && [ -f /tmp/autoupdate.lock ] ; then
+      safety_exit "autoupdate running"
+    fi
     /sbin/reboot -f
   fi
   logger -s -t "gluon-quickfix" -p 5 "no reboot during first hour"
 }
 
 # don't do anything the first 10 minutes
-[ "$(cat /proc/uptime | sed 's/\..*//g')" -gt "600" ] || safety_exit "uptime low!"
+[ "$(sed 's/\..*//g' /proc/uptime)" -gt "600" ] || safety_exit "uptime low!"
 
-# stale autoupdater
+# check for stale autoupdater
 if [ -f /tmp/autoupdate.lock ] ; then
   MAXAGE=$(($(date +%s)-60*${UPDATEWAIT}))
   LOCKAGE=$(date -r /tmp/autoupdate.lock +%s)
   if [ "$MAXAGE" -gt "$LOCKAGE" ] ; then
-    now_reboot "stale autoupdate.lock file"
+    now_reboot "stale autoupdate.lock file" -f
   fi
   safety_exit "autoupdate running"
- fi
-
-echo safety checks done, continuing...
+fi
 
 # batman-adv crash when removing interface in certain configurations
-dmesg | grep "Kernel bug" >/dev/null && now_reboot "gluon issue #680"
-dmesg | grep ath | grep "alloc of size" | grep "failed" && now_reboot "ath0 malloc fail"
-dmesg | grep "ksoftirqd" | grep "page allcocation failure" && now_reboot "kernel malloc fail"
+dmesg | grep -q "Kernel bug" && now_reboot "gluon issue #680"
+# ath/ksoftirq-malloc-errors (upcoming oom scenario)
+dmesg | grep "ath" | grep "alloc of size" | grep -q "failed" && now_reboot "ath0 malloc fail"
+dmesg | grep "ksoftirqd" | grep -q "page allcocation failure" && now_reboot "kernel malloc fail"
 
 # too many tunneldigger restarts
-[ "$(ps |grep -e tunneldigger\ restart -e tunneldigger-watchdog|wc -l)" -ge "9" ] && now_reboot "too many Tunneldigger-Restarts"
+[ "$(ps |grep -c -e tunneldigger\ restart -e tunneldigger-watchdog)" -ge "9" ] && now_reboot "too many Tunneldigger-Restarts"
 
 # br-client without ipv6 in prefix-range
-brc6=$(ip -6 a s dev br-client | awk '/inet6/ { print $2 }'|cut -b1-9 |grep -c $(cat /lib/gluon/site.json|tr "," "\n"|grep \"prefix6\"|cut -d: -f2-3|cut -b2-10) 2>/dev/nul)
-if [ "$brc6" == "0" ]; then
+if [ "$(ip -6 addr show to "$(jsonfilter -i /lib/gluon/site.json -e '$.prefix6')" dev br-client | grep -c inet6)" == "0" ]; then
   now_reboot "br-client without ipv6 in prefix-range (probably none)"
 fi
 
-# respondd or dropbear not running
-pgrep respondd >/dev/null || sleep 20; pgrep respondd >/dev/null || now_reboot "respondd not running"
-pgrep dropbear >/dev/null || sleep 20; pgrep dropbear >/dev/null || now_reboot "dropbear not running"
+reboot_when_not_running() {
+  (pgrep $1 || sleep 20 ; pgrep $1 || now_reboot "$1 not running") &> /dev/null
+}
 
-# radio0_check for lost neighbours
-if [ "$(uci get wireless.radio0)" == "wifi-device" ]; then
-  if [ ! "$(uci show|grep wireless.radio0.disabled|cut -d= -f2|tr -d \')" == "1" ]; then
-    if ! [[  "$(uci show|grep wireless.mesh_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  &&  "$(uci show|grep wireless.client_radio0.disabled|cut -d= -f2|tr -d \')" == "1"  ]]; then
-      echo has radio0 enabled
-      [ -f /tmp/iwdev.log ] && rm /tmp/iwdev.log
-      iw dev>/tmp/iwdev.log &
-      sleep 20
-      [ $(cat /tmp/iwdev.log|wc -l) -eq 0 ] && now_reboot "iw dev freezes or radio0 misconfigured"
-      DEV="$(iw dev|grep Interface|grep -e 'mesh0' -e 'ibss0'| awk '{ print $2 }'|head -1)"
-      scan() {
-        logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
-        iw dev $DEV scan lowpri passive>/dev/null
-      }
-      OLD_NEIGHBOURS=$(cat /tmp/mesh_neighbours 2>/dev/null)
-      NEIGHBOURS=$(iw dev $DEV station dump | grep -e "^Station " | awk '{ print $2 }')
-      echo $NEIGHBOURS > /tmp/mesh_neighbours
-      for NEIGHBOUR in $OLD_NEIGHBOURS; do
-        echo $NEIGHBOURS | grep $NEIGHBOUR >/dev/null || (scan; break)
-      done
-    fi
+# respondd or dropbear not running
+reboot_when_not_running respondd
+reboot_when_not_running dropbear
+
+iw_dev_reboot_freeze() {
+  # first parameter defines the time to wait
+  # calls `iw` with the rest of the arguments given to the function
+  local t=$1 ; shift
+  iw dev $@ &
+  # get the bg process
+  local p=$!
+  sleep $t
+  # kill -0 does nothing, but returns true if the process exists
+  kill -0 $p 2>/dev/null && now_reboot "'iw dev $@' freezes for more than $t s"
+}
+
+scan() {
+  # call iw $dev scan to repair defunc wifi
+  logger -s -t "gluon-quickfix" -p 5 "neighbour lost, running iw scan"
+  iw_dev_reboot_freeze 30 $1 scan lowpri passive>/dev/null
+}
+
+# check all radios for lost neighbours
+for mesh_radio in `uci show wireless | grep -E -o '(ibss|mesh)_radio[0-9]+' | awk '!seen[$0]++'`; do
+  radio="$(uci get wireless.$mesh_radio.device)"
+  if [[ "$(uci -q get wireless.$radio.disabled)" != "1" && "$(uci -q get wireless.$mesh_radio.disabled)" != "1" ]]; then
+    DEV="$(uci get wireless.$mesh_radio.ifname)"
+    N_LOG="/tmp/mesh_neighbours_$mesh_radio"
+    OLD_NEIGHBOURS=$(cat $N_LOG 2>/dev/null)
+    # fill log with new neighbours
+    iw_dev_reboot_freeze 20 $DEV station dump | grep -e "^Station " | cut -f 2 -d ' ' > $N_LOG
+    for NEIGHBOUR in $OLD_NEIGHBOURS; do
+       grep -q $NEIGHBOUR "$N_LOG" || (scan $DEV; break)
+    done
   fi
-fi
+done
