@@ -5,7 +5,7 @@ PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
@@ -17,7 +17,7 @@ define Package/gluon-config-mode-ppa
 endef
 
 define Package/gluon-config-mode-ppa/description
-	Add a checkbox to accept the PPA
+  Add a checkbox to accept the PPA
 endef
 
 define Build/Prepare
@@ -34,11 +34,6 @@ endef
 define Package/gluon-config-mode-ppa/install
 	$(CP) ./files/* $(1)/
 	$(call GluonInstallI18N,gluon-config-mode-ppa,$(1))
-endef
-
-define Package/gluon-config-mode-ppa/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
 endef
 
 $(eval $(call BuildPackage,gluon-config-mode-ppa))
