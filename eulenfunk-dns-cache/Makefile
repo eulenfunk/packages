@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/eulenfunk-dns-cache
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Use Node as DNS cache, configure using site.conf from ffffm
@@ -28,8 +28,8 @@ endef
 define Build/Compile
 endef
 
-define Package/eulenfunk-dns-cache/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 endef
 
-$(eval $(call BuildPackage,eulenfunk-dns-cache))
+$(eval $(call BuildPackage,$(PKG_NAME)))

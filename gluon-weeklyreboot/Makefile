@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-weeklyreboot
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=weekly reboot sheduled on fridays
@@ -24,9 +24,9 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-weeklyreboot/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/weeklyreboot/weeklyreboot.sh
 endef
 
-$(eval $(call BuildPackage,gluon-weeklyreboot))
+$(eval $(call BuildPackage,$(PKG_NAME)))

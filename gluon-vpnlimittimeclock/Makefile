@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-vpnlimittimeclock
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Turn on/off the bandwitdth limit for vpn-usage by cron schedule
@@ -24,9 +24,9 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-vpnlimittimeclock/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/vpnlimittimeclock/vpnlimittimeclock.sh
 endef
 
-$(eval $(call BuildPackage,gluon-vpnlimittimeclock))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -8,7 +8,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-banner
+define Package/$(PKG_NAME)
   SECTION:=eulenfunk
   CATEGORY:=Customization
   TITLE:=Banner file replacement
@@ -18,7 +18,7 @@ define Package/gluon-banner
   SOURCE:=https://github.com/eulenfunk/packages.git
 endef
 
-define Package/gluon-banner/description
+define Package/$(PKG_NAME)/description
 	Banner file replacement
 endef
 
@@ -32,7 +32,7 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-banner/preinst
+define Package/$(PKG_NAME)/preinst
 #!/bin/sh
 cd "$${IPKG_INSTROOT}/etc/"
 if [ -h "./banner" ] ; then
@@ -51,7 +51,7 @@ fi
 exit 0
 endef
 
-define Package/gluon-banner/postinst
+define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 cd "$${IPKG_INSTROOT}/etc/"
 [ -h "./banner" ] && /bin/rm -f "./banner"
@@ -61,7 +61,7 @@ cd "$${IPKG_INSTROOT}/etc/"
 exit $$?
 endef
 
-define Package/gluon-banner/prerm
+define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 cd "$${IPKG_INSTROOT}/etc/"
 if [ -h "./banner" ] ; then
@@ -79,10 +79,10 @@ fi
 exit 0
 endef
 
-define Package/gluon-banner/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/
 	$(INSTALL_DATA) ./files/etc/banner.gluon $(1)/etc/
 	$(CP) ./files/* $(1)/
 endef
 
-$(eval $(call BuildPackage,gluon-banner))
+$(eval $(call BuildPackage,$(PKG_NAME)))

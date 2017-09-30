@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-aptimeclock
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Turn on/off client AP by cron
@@ -24,9 +24,9 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-aptimeclock/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/aptimeclock/aptimeclock.sh
 endef
 
-$(eval $(call BuildPackage,gluon-aptimeclock))
+$(eval $(call BuildPackage,$(PKG_NAME)))

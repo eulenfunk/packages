@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-hotfix
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Workaround
   TITLE:=Hotfix-collection_VFN
@@ -24,11 +24,11 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-hotfix/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/rebootIfNoWifiClients.sh
 	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/rebootIfNoGw.sh
 	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/fixbat0br.sh
 endef
 
-$(eval $(call BuildPackage,gluon-hotfix))
+$(eval $(call BuildPackage,$(PKG_NAME)))
