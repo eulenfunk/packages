@@ -32,4 +32,3 @@ define Package/gluon-hotfix/install
 endef
 
 $(eval $(call BuildPackage,gluon-hotfix))
-

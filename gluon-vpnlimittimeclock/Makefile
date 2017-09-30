@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-vpnlimittimeclock
-PKG_VERSION:=1
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
 define Package/gluon-vpnlimittimeclock
   SECTION:=gluon
@@ -15,7 +15,7 @@ define Package/gluon-vpnlimittimeclock
 endef
 
 define Build/Prepare
-        mkdir -p $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
@@ -25,9 +25,8 @@ define Build/Compile
 endef
 
 define Package/gluon-vpnlimittimeclock/install
-        $(CP) ./files/* $(1)/
+	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/vpnlimittimeclock/vpnlimittimeclock.sh
 endef
 
 $(eval $(call BuildPackage,gluon-vpnlimittimeclock))
-

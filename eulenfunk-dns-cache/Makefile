@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=eulenfunk-dns-cache
-PKG_VERSION:=1
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
 define Package/eulenfunk-dns-cache
   SECTION:=gluon
@@ -15,7 +15,7 @@ define Package/eulenfunk-dns-cache
 endef
 
 define Package/gluon-legacy/description
-	Use Node as DNS cache, configure using site.conf
+  Use Node as DNS cache, configure using site.conf
 endef
 
 define Build/Prepare
@@ -33,4 +33,3 @@ define Package/eulenfunk-dns-cache/install
 endef
 
 $(eval $(call BuildPackage,eulenfunk-dns-cache))
-
