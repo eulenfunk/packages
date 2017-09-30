@@ -48,11 +48,11 @@ ssid_changer = {
   prefix = 'FF_Offline_',   -- use something short to leave space for the nodename (no '~' allowed!)
   suffix = 'nodename',      -- generate the SSID with either 'nodename', 'mac' or to use only the prefix: 'none'
   
-  tq_limit_enabled = false, -- if false, the offline SSID will only be set if there is no gateway reacheable
+  tq_limit_enabled = true,  -- if false, the offline SSID will only be set if there is no gateway reacheable
                             -- upper and lower limit to turn the offline_ssid on and off
                             -- in-between these two values the SSID will never be changed to prevent it from toggeling every minute.
-  tq_limit_max = 45,        -- upper limit, above that the online SSID will be used
-  tq_limit_min = 35         -- lower limit, below that the offline SSID will be used
+  tq_limit_max = 30,        -- upper limit, above that the online SSID will be used
+  tq_limit_min = 15         -- lower limit, below that the offline SSID will be used
 },
 ```
 
