@@ -1,1 +1,1 @@
-*/7 * * * * /bin/sh /lib/gluon/quickfix/quickfix.sh
+*/5 * * * * /bin/sh /lib/gluon/quickfix/quickfix.sh

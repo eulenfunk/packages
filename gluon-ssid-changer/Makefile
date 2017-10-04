@@ -1,33 +1,53 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-ssid-changer
-PKG_VERSION:=1
+PKG_VERSION:=4
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-ssid-changer
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
+
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=SSID Changer
+  TITLE:=changes the SSID to an Offline-SSID so clients don't connect to an offline WiFi
   DEPENDS:=+gluon-core +micrond
 endef
 
+define Package/$(PKG_NAME)/description
+  Script to change the SSID to an Offline-SSID when there is no connection to
+  any gateway. This SSID can be generated from the nodes hostname with the first
+  and last part of the nodename or the mac address, to allow observers to 
+  recognise which node is down. The script is called once a minute by micron.d
+  and it will change from online to offline-SSID maximum once every (definable)
+  timeframe.
+endef
+
 define Build/Prepare
-        mkdir -p $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,$(PKG_NAME),i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
-define Package/gluon-ssid-changer/install
-        $(CP) ./files/* $(1)/
+define Package/$(PKG_NAME)/install
+	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/ssid-changer/ssid-changer.sh
+	$(call GluonInstallI18N,$(PKG_NAME),$(1))
 endef
 
-$(eval $(call BuildPackage,gluon-ssid-changer))
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
+endef
 
+$(eval $(call BuildPackage,$(PKG_NAME)))
