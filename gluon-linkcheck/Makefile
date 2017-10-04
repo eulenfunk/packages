@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-linkcheck
-PKG_VERSION:=1
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-linkcheck
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=WIFI-Neighborcheck
@@ -15,7 +15,7 @@ define Package/gluon-linkcheck
 endef
 
 define Build/Prepare
-        mkdir -p $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
@@ -24,10 +24,9 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-linkcheck/install
-        $(CP) ./files/* $(1)/
+define Package/$(PKG_NAME)/install
+	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/linkcheck/linkcheck.sh
 endef
 
-$(eval $(call BuildPackage,gluon-linkcheck))
-
+$(eval $(call BuildPackage,$(PKG_NAME)))

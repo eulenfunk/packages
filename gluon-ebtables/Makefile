@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-ebtables
-PKG_VERSION:=1
+PKG_VERSION:=2
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
 
 define Package/gluon-ebtables
@@ -33,7 +33,6 @@ endef
 define Package/gluon-ebtables/install
 	mkdir -p $(1)/lib/gluon/ebtables-worker
 	$(CP) ./files/* $(1)/
-	
 endef
 
 $(eval $(call BuildPackage,gluon-ebtables))

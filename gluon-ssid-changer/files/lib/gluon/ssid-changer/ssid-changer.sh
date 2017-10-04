@@ -1,87 +1,172 @@
 #!/bin/sh
 
-# At first some Definitions:
+#################
+# safety checks #
+#################
+safety_exit() {
+	echo $1, exiting with error code 2
+	exit 2
+}
+pgrep -f autoupdater >/dev/null && safety_exit 'autoupdater running'
+[ $(cat /proc/uptime | sed 's/\..*//g') -gt 60 ] || safety_exit 'less than one minute'
+[ $(find /var/run -name hostapd-phy* | wc -l) -gt 0 ] || safety_exit 'no hostapd-phy*'
+	
+# only once every timeframe minutes the SSID will change to the Offline-SSID
+# (set to 1 minute to change immediately every time the router gets offline)
+MINUTES="$(uci -q get ssid-changer.settings.switch_timeframe)"
+: ${MINUTES:=30}
 
-ONLINE_SSID=$(uci -q get wireless.client_radio0.ssid)
-: ${ONLINE_SSID:=FREIFUNK}   # if for whatever reason ONLINE_SSID is NULL
-OFFLINE_PREFIX='FF_OFFLINE_' # Use something short to leave space for the nodename
+# the first few minutes directly after reboot within which an Offline-SSID always may be activated
+# (must be <= switch_timeframe)
+FIRST="$(uci -q get ssid-changer.settings.first)"
+: ${FIRST:=5}
 
-UPPER_LIMIT='30' #Above this limit the online SSID will be used
-LOWER_LIMIT='15' #Below this limit the offline SSID will be used
-# In-between these two values the SSID will never be changed to preven it from toggeling every Minute.
+# the Offline-SSID will start with this prefix use something short to leave space for the nodename
+# (no '~' allowed!)
+PREFIX="$(uci -q get ssid-changer.settings.prefix)"
+: ${PREFIX:='FF_Offline_'}
 
-# Generate an Offline SSID with the first and last Part of the nodename to allow owner to recognise wich node is down
-NODENAME=`uname -n`
-if [ ${#NODENAME} -gt $((30 - ${#OFFLINE_PREFIX})) ] ; then #32 would be possible as well
-	HALF=$(( (28 - ${#OFFLINE_PREFIX} ) / 2 )) #calculate the length of the first part of the node identifier in the offline-ssid
-	SKIP=$(( ${#NODENAME} - $HALF )) #jump to this charakter for the last part of the name
-	OFFLINE_SSID=$OFFLINE_PREFIX${NODENAME:0:$HALF}...${NODENAME:$SKIP:${#NODENAME}} # use the first and last part of the nodename for nodes with long name
+if [ "$(uci -q get ssid-changer.settings.enabled)" = '0' ]; then 
+	DISABLED='1'
 else
-	OFFLINE_SSID="$OFFLINE_PREFIX$NODENAME" #greate we are able to use the full nodename in the offline ssid
+	DISABLED='0'
 fi
 
-#Is there an active Gateway?
-GATEWAY_TQ=`batctl gwl | grep -e "^=>" -e "^\*" | awk -F'[()]' '{print $2}'| tr -d " "` #Grep the Connection Quality of the Gateway which is currently used
+# generate the ssid with either 'nodename', 'mac' or to use only the prefix set to 'none'
+SETTINGS_SUFFIX="$(uci -q get ssid-changer.settings.suffix)"
+: ${SETTINGS_SUFFIX:='nodename'}
 
-if [ ! $GATEWAY_TQ ]; #If there is no gateway there will be errors in the following if clauses
-then
-	GATEWAY_TQ=0 #Just an easy way to get an valid value if there is no gatway
+if [ $SETTINGS_SUFFIX = 'nodename' ]; then
+	SUFFIX="$(uname -n)"
+	# 32 would be possible as well
+	if [ ${#SUFFIX} -gt $((30 - ${#PREFIX})) ]; then
+		# calculate the length of the first part of the node identifier in the offline-ssid
+		HALF=$(( (28 - ${#PREFIX} ) / 2 ))
+		# jump to this charakter for the last part of the name
+		SKIP=$(( ${#SUFFIX} - $HALF ))
+		# use the first and last part of the nodename for nodes with long name
+		SUFFIX=${SUFFIX:0:$HALF}...${SUFFIX:$SKIP:${#SUFFIX}}
+	fi
+elif [ $SETTINGS_SUFFIX = 'mac' ]; then
+	SUFFIX="$(uci -q get network.bat0.macaddr)"
+else
+	# 'none'
+	SUFFIX=''
 fi
 
-if [ $GATEWAY_TQ -gt $UPPER_LIMIT ];
-then
-	echo "Gateway TQ is $GATEWAY_TQ node is online"
-	for HOSTAPD in $(ls /var/run/hostapd-phy*); do #Check status for all physical devices
-		CURRENT_SSID=`grep "^ssid=$ONLINE_SSID" $HOSTAPD | cut -d"=" -f2`
-		if [ $CURRENT_SSID == $ONLINE_SSID ]
-		then
-			echo "SSID $CURRENT_SSID is correct, noting to do"
-			HUP_NEEDED=0
+OFFLINE_SSID="$PREFIX$SUFFIX"
+
+# if for whatever reason ONLINE_SSID is NULL
+ONLINE_SSID="$(uci -q get wireless.client_radio0.ssid)"
+: ${ONLINE_SSID:="FREIFUNK"}
+
+# temp file to count the offline incidents during switch_timeframe
+TMP=/tmp/ssid-changer-count
+if [ ! -f $TMP ]; then echo "0">$TMP; fi
+OFF_COUNT=$(cat $TMP)
+
+TQ_LIMIT_ENABLED="$(uci -q get ssid-changer.settings.tq_limit_enabled)"
+# if true, the offline ssid will only be set if there is no gateway reacheable
+# upper and lower limit to turn the offline_ssid on and off
+# in-between these two values the SSID will never be changed to preven it from toggeling every Minute.
+: ${TQ_LIMIT_ENABLED:='0'}
+
+if [ $TQ_LIMIT_ENABLED = 1 ]; then
+	TQ_LIMIT_MAX="$(uci -q get ssid-changer.settings.tq_limit_max)"
+	#  upper limit, above that the online SSID will be used
+	: ${TQ_LIMIT_MAX:='45'}
+	TQ_LIMIT_MIN="$(uci -q get ssid-changer.settings.tq_limit_min)"
+	#  lower limit, below that the offline SSID will be used
+	: ${TQ_LIMIT_MIN:='35'}
+	# grep the connection quality of the currently used gateway
+	GATEWAY_TQ=$(batctl gwl | grep -e "^=>" -e "^\*" | awk -F '[('')]' '{print $2}' | tr -d " ")
+	if [ ! $GATEWAY_TQ ]; then
+		# there is no gateway
+		GATEWAY_TQ=0
+	fi
+	
+	MSG="TQ is $GATEWAY_TQ, "
+	
+	if [ $GATEWAY_TQ -ge $TQ_LIMIT_MAX ]; then
+		CHECK=1
+	elif [ $GATEWAY_TQ -lt $TQ_LIMIT_MIN ]; then
+		CHECK=0
+	else
+		# this is just get a clean run if we are in-between the grace periode
+		echo "TQ is $GATEWAY_TQ, do nothing"
+		exit 0
+	fi
+else
+	MSG=""
+	CHECK="$(batctl gwl -H|grep -v "gateways in range"|wc -l)"
+fi
+
+UP=$(($(cat /proc/uptime | sed 's/\..*//g') / 60))
+M=$(($UP % $MINUTES))
+
+HUP_NEEDED=0
+if [ "$CHECK" -gt 0 ] || [ "$DISABLED" = '1' ]; then
+	echo "node is online"
+	# check status for all physical devices
+	for HOSTAPD in $(ls /var/run/hostapd-phy*); do
+		CURRENT_SSID="$(grep "^ssid=$ONLINE_SSID" $HOSTAPD | cut -d"=" -f2)"
+		if [ "$CURRENT_SSID" = "$ONLINE_SSID" ]; then
+			echo "SSID $CURRENT_SSID is correct, nothing to do"
 			break
 		fi
-		CURRENT_SSID=`grep "^ssid=$OFFLINE_SSID" $HOSTAPD | cut -d"=" -f2`
-		if [ $CURRENT_SSID == $OFFLINE_SSID ]
-		then
-			logger -s -t "gluon-offline-ssid" -p 5 "TQ is $GATEWAY_TQ, SSID is $CURRENT_SSID, change to $ONLINE_SSID" #Write Info to Syslog
-			sed -i s/^ssid=$CURRENT_SSID/ssid=$ONLINE_SSID/ $HOSTAPD
-			HUP_NEEDED=1 # HUP here would be to early for dualband devices
+		CURRENT_SSID="$(grep "^ssid=$OFFLINE_SSID" $HOSTAPD | cut -d"=" -f2)"
+		if [ "$CURRENT_SSID" = "$OFFLINE_SSID" ]; then
+			# set online
+			logger -s -t "gluon-ssid-changer" -p 5 $MSG"SSID is $CURRENT_SSID, change to $ONLINE_SSID"
+			sed -i "s~^ssid=$CURRENT_SSID~ssid=$ONLINE_SSID~" $HOSTAPD
+			# HUP here would be to early for dualband devices
+			HUP_NEEDED=1
 		else
-			echo "There is something wrong, did not find SSID $ONLINE_SSID or $OFFLINE_SSID"
+			logger -s -t "gluon-ssid-changer" -p 5 "could not set to online state: did neither find SSID '$ONLINE_SSID' nor '$OFFLINE_SSID'. Please reboot"
 		fi
 	done
-fi
-
-if [ $GATEWAY_TQ -lt $LOWER_LIMIT ];
-then
-	echo "Gateway TQ is $GATEWAY_TQ node is considered offline"
-	for HOSTAPD in $(ls /var/run/hostapd-phy*); do #Check status for all physical devices
-		CURRENT_SSID=`grep "^ssid=$OFFLINE_SSID" $HOSTAPD | cut -d"=" -f2`
-		if [ $CURRENT_SSID == $OFFLINE_SSID ]
-		then
-			echo "SSID $CURRENT_SSID is correct, noting to do"
-			HUP_NEEDED=0
-			break
-		fi
-		CURRENT_SSID=`grep "^ssid=$ONLINE_SSID" $HOSTAPD | cut -d"=" -f2`
-		if [ $CURRENT_SSID == $ONLINE_SSID ]
-		then
-			logger -s -t "gluon-offline-ssid" -p 5 "TQ is $GATEWAY_TQ, SSID is $CURRENT_SSID, change to $OFFLINE_SSID" #Write Info to Syslog
-			sed -i s/^ssid=$ONLINE_SSID/ssid=$OFFLINE_SSID/ $HOSTAPD
-			HUP_NEEDED=1 # HUP here would be to early for dualband devices
+elif [ "$CHECK" -eq 0 ]; then
+	echo "node is considered offline"
+	if [ $UP -lt $FIRST ] || [ $M -eq 0 ]; then
+		# set SSID offline, only if uptime is less than FIRST or exactly a multiplicative of switch_timeframe
+		if [ $UP -lt $FIRST ]; then 
+			T=$FIRST
 		else
-			echo "There is something wrong, did not find SSID $ONLINE_SSID or $OFFLINE_SSID"
+			T=$MINUTES
 		fi
-	done
+		#echo minute $M, check if $OFF_COUNT is more than half of $T 
+		if [ $OFF_COUNT -ge $(($T / 2)) ]; then
+			# node was offline more times than half of switch_timeframe (or than $FIRST)
+			for HOSTAPD in $(ls /var/run/hostapd-phy*); do
+				CURRENT_SSID="$(grep "^ssid=$OFFLINE_SSID" $HOSTAPD | cut -d"=" -f2)"
+				if [ "$CURRENT_SSID" = "$OFFLINE_SSID" ]; then
+					echo "SSID $CURRENT_SSID is correct, nothing to do"
+					break
+				fi
+				CURRENT_SSID="$(grep "^ssid=$ONLINE_SSID" $HOSTAPD | cut -d"=" -f2)"
+				if [ "$CURRENT_SSID" = "$ONLINE_SSID" ]; then
+					# set offline
+					logger -s -t "gluon-ssid-changer" -p 5 $MSG"$OFF_COUNT times offline, SSID is $CURRENT_SSID, change to $OFFLINE_SSID"
+					sed -i "s~^ssid=$ONLINE_SSID~ssid=$OFFLINE_SSID~" $HOSTAPD
+					HUP_NEEDED=1
+				else
+					logger -s -t "gluon-ssid-changer" -p 5 "could not set to offline state: did neither find SSID '$ONLINE_SSID' nor '$OFFLINE_SSID'. Please reboot"
+				fi
+			done
+		fi
+		#else echo minute $M, just count $OFF_COUNT
+	fi
+	echo "$(($OFF_COUNT + 1))">$TMP
 fi
 
-if [ $GATEWAY_TQ -ge $LOWER_LIMIT -a $GATEWAY_TQ -le $UPPER_LIMIT ]; #This is just get a clean run if we are in-between the grace periode
-then
-	echo "TQ is $GATEWAY_TQ, do nothing"
-	HUP_NEEDED=0
-fi
-
-if [ $HUP_NEEDED == 1 ]; then
-	killall -HUP hostapd # Send HUP to all hostapd um die neue SSID zu laden
+if [ $HUP_NEEDED = 1 ]; then
+	# send HUP to all hostapd to load the new SSID
+	killall -HUP hostapd
 	HUP_NEEDED=0
 	echo "HUP!"
+fi
+
+if [ $M -eq 0 ]; then
+	# set counter to 0 if the timeframe is over
+	echo "0">$TMP
 fi

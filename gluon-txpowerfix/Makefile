@@ -7,14 +7,14 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/gluon-txpowerfix
+define Package/$(PKG_NAME)
   SECTION:=admin
   CATEGORY:=Workaround
   DEPENDS:=+wireless-tools
   TITLE:=Fixes txpower on some wifi nodes under chaos calmer (gluon 2016.1)
 endef
 
-define Package/gluon-txpowerfix/description
+define Package/$(PKG_NAME)/description
   With chaoscalmer, wifi nodes seemed to be locked to less txpower than they could do.
   First suggestions are, that this is a mistake in the upstream OpenWrt-Code. Even the
   bugtrackers of OpenWrt are full of this. 
@@ -33,11 +33,11 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-txpowerfix/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/etc/init.d/txpowerfix
 	./gluonShellDiet.sh $(1)/lib/gluon/upgrade/210-gluon-txpower-fix
 	./gluonShellDiet.sh $(1)/lib/gluon/txpowerfix/txpowerfix.lua
 endef
 
-$(eval $(call BuildPackage,gluon-txpowerfix))
+$(eval $(call BuildPackage,$(PKG_NAME)))
