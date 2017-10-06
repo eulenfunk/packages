@@ -35,9 +35,9 @@ endef
 
 define Package/gluon-txpowerfix/install
 	$(CP) ./files/* $(1)/
-	./gluonShellDiet.sh $(1)/lib/gluon/txpowerfix/txpowerfix.lua
-	./gluonShellDiet.sh $(1)/lib/gluon/upgrade/210-gluon-txpower-fix
 	./gluonShellDiet.sh $(1)/etc/init.d/txpowerfix
+	./gluonShellDiet.sh $(1)/lib/gluon/upgrade/210-gluon-txpower-fix
+	./gluonShellDiet.sh $(1)/lib/gluon/txpowerfix/txpowerfix.lua
 endef
 
 $(eval $(call BuildPackage,gluon-txpowerfix))
