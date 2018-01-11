@@ -8,7 +8,7 @@ sleep 25 # this is a hack
 ClientRadio0off="/tmp/ClientRadio0.off"
 ClientRadio0on="/tmp/ClientRadio0.on"
 
-CurrentTime="$(date +%k%M)"
+CurrentTime="$(date +%H%M)"
 CurrentDayOfWeek="$(date +%w)"
 #echo "CurrentTime is $CurrentTime, CurrentDayOfWeek is $CurrentDayOfWeek"
 
