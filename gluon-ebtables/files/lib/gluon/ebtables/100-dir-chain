@@ -1,5 +1,0 @@
-chain('IN_ONLY', 'RETURN')
-chain('OUT_ONLY', 'RETURN')
-
-chain('MULTICAST_OUT', 'RETURN')
-chain('MULTICAST_OUT_ICMPV6', 'RETURN')
