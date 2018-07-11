@@ -11,14 +11,14 @@ define Package/$(PKG_NAME)
   SECTION:=admin
   CATEGORY:=Workaround
   DEPENDS:=+wireless-tools
-  TITLE:=Fixes txpower on some wifi nodes under chaos calmer (gluon 2016.1)
+  TITLE:=Fixes txpower on some wifi nodes since OpenWrt chaos calmer
 endef
 
 define Package/$(PKG_NAME)/description
-  With chaoscalmer, wifi nodes seemed to be locked to less txpower than they could do.
+  With chaoscalmer, wifi nodes seemed to be locked to less txpower than they could send.
   First suggestions are, that this is a mistake in the upstream OpenWrt-Code. Even the
   bugtrackers of OpenWrt are full of this. 
-  The idea of this workaround is, to check if the txpower could be increased iff it is not
+  The idea of this workaround is, to check if the txpower could be increased if it is not
   already set to a special value. Unfortunately this can only be done by setting the 
   country code to 00/BO.
 endef

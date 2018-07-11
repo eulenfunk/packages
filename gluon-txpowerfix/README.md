@@ -1,7 +1,7 @@
 gluon txpowerfix
 ================
 
-up to OpenWRT BarrierBreaker, the wifi stack did take automatically the
+Up to OpenWRT BarrierBreaker, the wifi stack did take automatically the
 highest available txpower. 
 
 introduction with ChaosCalmer, OpenWRT does take into account the antenna
@@ -25,10 +25,11 @@ txpower value.
 
 To use the script in your firmware:
 
-<br>
-GLUON_SITE_FEEDS="eulenfunk"<br>
-PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git<br>
-PACKAGES_EULENFUNK_COMMIT=*/missing/*<br>
-PACKAGES_EULENFUNK_BRANCH=master<br>
+```
+GLUON_SITE_FEEDS="eulenfunk"
+PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git
+PACKAGES_EULENFUNK_COMMIT=*/missing/*
+PACKAGES_EULENFUNK_BRANCH=v2018.1.x
+```
 
-With this done you can add the package *gluon-txpowerfix* to your site.mk
+With this done you can add the package `gluon-txpowerfix` to your `site.mk`
