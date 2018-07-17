@@ -48,15 +48,3 @@ else
   touch /tmp/ip6anycast
   rm -f /tmp/ip6anycastgone.* 2>/dev/null
 fi
-
-#check if wifi is stucking
-radio0=$(uci get wireless.radio0) 2>/dev/null
-if [ "$?" -eq 0 ] ; then
-  rm -f /tmp/wifi.running
-  (iw dev > /dev/null && touch /tmp/wifi.running || if [ "$?" -eq 127 ]; then touch /tmp/wifi.running; fi ) &
-  sleep 30
-  if [ ! -f /tmp/wifi.running ]; then
-    [ -f $upgrade_started ] && exit
-     securereboot
-  fi
-fi
