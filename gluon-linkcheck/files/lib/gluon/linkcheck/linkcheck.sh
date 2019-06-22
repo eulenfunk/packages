@@ -10,6 +10,18 @@ valuecheck ()
     if [ "$wert" -lt 1 ] ; then # alone?
       if [ -f /tmp/linkcheck.$linkname.$check.linkpb1 ] ; then
         if [ -f /tmp/linkcheck.$linkname.$check.linkpb2 ] ; then
+          if [ -f /tmp/linkcheck.$linkname.$check.linkpb3 ] ; then
+            logger -s -t "gluon-linkcheck" -p 5 "3nd time no neighbours $linkname.$check, rebooting!"
+            sleep 10
+            upgrade_started='/tmp/autoupdate.lock'
+            [ -f $upgrade_started ] && exit
+            reboot -f
+           else
+            logger -s -t "gluon-linkcheck" -p 5 "still no neighbours $linkname.$check, network restart"
+            echo 1>/tmp/linkcheck.$linkname.$check.linkpb3
+            /etc/init.d/network restart
+            sleep 10
+           fi
           logger -s -t "gluon-linkcheck" -p 5 "2nd time no neighbours $linkname.$check, rebooting!"
           sleep 10
           upgrade_started='/tmp/autoupdate.lock'
@@ -31,6 +43,9 @@ valuecheck ()
       fi
       if [ -f /tmp/linkcheck.$linkname.$check.linkpb2 ] ; then
         rm /tmp/linkcheck.$linkname.$check.linkpb2
+      fi
+      if [ -f /tmp/linkcheck.$linkname.$check.linkpb3 ] ; then
+        rm /tmp/linkcheck.$linkname.$check.linkpb3
       fi
     fi
   fi
