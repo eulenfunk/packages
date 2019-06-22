@@ -27,7 +27,6 @@ endef
 define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/rebootIfNoGw.sh
-	./gluonShellDiet.sh $(1)/lib/gluon/hotfix/fixbat0br.sh
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
