@@ -1,24 +1,23 @@
 #!/bin/sh
 [ -f /etc/banner ] && cat /etc/banner
-
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin
 export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
 export HOME=${HOME:-/root}
 export PS1='\u@\h:\w\$ '
-
 [ -x /bin/more ] || alias more=less
 [ -x /usr/bin/vim ] && alias vi=vim || alias vim=vi
-
 [ -z "$KSH_VERSION" -o \! -s /etc/mkshrc ] || . /etc/mkshrc
-
 [ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
 [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
 batctl gwl
 echo firmware:  \'$(cat /lib/gluon/release)\' - \'$(cat /lib/gluon/gluon-version)\' autoupdater=$(uci show|grep autoupdater.settings.enabled|cut -d"=" -f2) branch=$(uci show|grep autoupdater.settings.branch|cut -d"=" -f2)$([ $(head -c 4 /tmp/sysinfo/model)  = 'TP-L' ] &&(. /lib/ar71xx.sh ;. /lib/functions.sh ; echo \ HWID=\'$(tplink_get_hwid)\'))
 for r in 0 1 2; do
-uci show|grep wireless.radio$r>/dev/null  && (echo -n w$(uci show|grep wireless.radio$r.disabled|cut -d"=" -f2)|sed -e "s/w'1'/Radio$1.OFF/"|sed -e "s/w'0'/Radio$r.ON/"|sed -e "s/w/Radio$r.ON/";echo \ r$r.ch=$(uci show|grep radio$r.channel|cut -d"=" -f2) r$r.mode=$(uci show|grep wireless.radio$r.htmode|cut -d"=" -f2) r$r.tx=\'$(iwinfo radio$r txpowerlist|grep "^*"|cut -d" " -f2)\' r$r.wifimesh-off=$(uci show|grep wireless.mesh_radio$r.disabled|cut -d"=" -f2) r$r.ap-off=$(uci show|grep wireless.client_radio$r.disabled|cut -d"=" -f2))done
+uci show|grep wireless.radio$r>/dev/null  && (echo -n w$(uci show|grep wireless.radio$r.disabled|cut -d"=" -f2)|sed -e "s/w'1'/Radio$1.OFF/"|sed -e "s/w'0'/Radio$r.ON/"|sed -e "s/w/Radio$r.ON/";echo \ r$r.ch=$(uci show|grep radio$r.channel|cut -d"=" -f2) r$r.mode=$(uci show|grep wireless.radio$r.htmode|cut -d"=" -f2) r$r.tx=\'$(iwinfo radio$r txpowerlist|grep "^*"|cut -d" " -f2)\' r$r.wifimesh-off=$(uci show|grep wireless.mesh_radio$r.disabled|cut -d"=" -f2) r$r.ap-off=$(uci show|grep wireless.client_radio$r.disabled|cut -d"=" -f2))
+done
+echo vpn=$(uci show|grep gluon.mesh_vpn.enabled|cut -d"=" -f2):$(uci show|grep tunneldigger.mesh_vpn.enabled|cut -d"=" -f2|sed -e "s/'1'/l2tp/"|sed -e "s/'0'/l2tp_off/")$(uci show|grep fastd.mesh_vpn.enabled|cut -d
+"=" -f2|sed -e "s/'1'/fastd/"|sed -e "s/'0'/fastd_off/") $(uci show|grep simple-tc.mesh_vpn.enabled|cut -d"=" -f2|sed -e "s/'1'/\*BW-LIMITED!\*/"|sed -e "s/'0'//")
+vpn='1':fastd *BW-LIMITED!*
 echo    "########################################"
-
 # just some handy aliases
 alias cd..="cd .."
 alias myip="echo -n 'ifconfig' && ifconfig |head|tail -n1 && echo 'from ssh : ' $SSH_CONNECTION"
