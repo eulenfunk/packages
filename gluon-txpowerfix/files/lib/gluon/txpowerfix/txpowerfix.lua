@@ -37,17 +37,28 @@ if uci:get('wireless', 'radio0', 'hwmode') then
         end
 end
 
---- 2.4G
---- determine country
-channel = uci:get('wireless', interface24, 'channel')
-if channel == '13' then
-        country = 'US'
-elseif channel == '12' then
-        country = 'DE'
+--- determine country according to 5G
+if interface50 then
+	channel = uci:get('wireless', interface50, 'channel')
+	if channel == '32' or channel == '68' or channel == '169' or channel == '173' then
+	        country = 'DE'
+	elseif channel == '138' or channel == '142' or channel == '144'  then
+        	country = 'US'
+	else
+	        country = 'TW'
+	end
 else
-        country = 'US'
+	channel = uci:get('wireless', interface24, 'channel')
+	if channel == '13' then
+	        country = 'TW'
+	elseif channel == '12' then
+        	country = 'DE'
+	else
+	        country = 'TW'
+	end
 end
 
+--- 2.4G
 --- set values (1st pass)
 uci:set('wireless', interface24, 'country', country)
 uci:set('wireless', interface24, 'htmode', 'HT20')
@@ -55,7 +66,7 @@ uci:save('wireless')
 uci:commit('wireless')
 t = cmd('sleep 2')
 t = cmd('/sbin/wifi')
-t = cmd('sleep 8')
+t = cmd('sleep 10')
 
 --- get maximum available power and step
 t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
@@ -92,7 +103,7 @@ if interface50 then
                 uci:commit('wireless')
                 t = cmd('sleep 2')
                 t = cmd('/sbin/wifi')
-                t = cmd('sleep 8')
+                t = cmd('sleep 10')
                 --- get maximum available power and step
                 t = cmd('iwinfo ' .. interface50 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
                 maximumTxPowerDb = string.gsub(t, "\n", "")
@@ -115,4 +126,4 @@ end
 
 t = cmd('sleep 2')
 t = cmd('/sbin/wifi')
-t = cmd('sleep 3')
+t = cmd('sleep 2')
