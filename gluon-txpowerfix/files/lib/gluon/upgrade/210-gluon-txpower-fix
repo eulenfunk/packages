@@ -15,20 +15,20 @@ end
 local interface24 = false
 local interface50 = false
 if uci:get('wireless', 'radio0', 'hwmode') then
-        chanR0 = uci:get('wireless', 'radio0', 'channel')
-        if chanR0 < '16' then
+        chanR0 = tonumber(uci:get('wireless', 'radio0', 'channel'))
+        if chanR0 < 16 then
                 interface24 = 'radio0'
-                chanR1 = uci:get('wireless', 'radio1', 'channel')
+                chanR1 = tonumber(uci:get('wireless', 'radio1', 'channel'))
                 if chanR1 then
-                        if chanR1 > '15' then
+                        if chanR1 > 15 then
                                interface50 = 'radio1'
                         end
                 end
-        elseif chanR0 > '15'  then
+        elseif chanR0 > 15  then
                 interface50 = 'radio0'
-                chanR1 = uci:get('wireless', 'radio1', 'channel')
+                chanR1 = tonumber(uci:get('wireless', 'radio1', 'channel'))
                 if chanR1 then
-                        if chanR1 < '16' then
+                        if chanR1 < 16 then
                                 interface24 = 'radio1'
                         end
                 end
