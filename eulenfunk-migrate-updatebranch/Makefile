@@ -6,7 +6,6 @@ PKG_RELEASE:=4
 
 include $(TOPDIR)/../package/gluon.mk
 
-
 define Package/$(PKG_NAME)
   TITLE:=Migrate autoupdater branches and settings
   DEPENDS:=+gluon-core

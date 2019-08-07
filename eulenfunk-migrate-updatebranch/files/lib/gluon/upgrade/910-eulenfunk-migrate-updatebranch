@@ -18,3 +18,4 @@ if [[ $GLUON_SITECODE == "si"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
 # drop outdated update branches
 uci -q delete autoupdater.broken || true
 
+uci commit
