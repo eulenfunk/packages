@@ -1,0 +1,20 @@
+#!/bin/sh
+
+UPDATE_BRANCH=$(uci get autoupdater.settings.branch)
+GLUON_SITECODE=$(lua /lib/gluon/eulenfunk-migrate-updatebranch/sitecode.lua)
+
+if [ "$GLUON_SITECODE" = "ffnef-erk" ] && [ "$UPDATE_BRANCH" = "stablel2tp" ]; then
+  uci set autoupdater.settings.branch='stable'
+ fi
+
+if [[ $GLUON_SITECODE == "ffnef-"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
+  uci set autoupdater.settings.branch='stable'
+ fi
+
+if [[ $GLUON_SITECODE == "si"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
+  uci set autoupdater.settings.branch='stable'
+ fi
+
+# drop outdated update branches
+uci -q delete autoupdater.broken || true
+
