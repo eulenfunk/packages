@@ -1,0 +1,15 @@
+#!/bin/sh
+[[ "${ACTION}" != "ifup" ]] && exit 0;
+
+. /lib/functions.sh
+config_load "wireless"
+
+local RADIO
+config_get RADIO ${INTERFACE} device
+[[ -z ${RADIO} ]] && exit 0;
+
+local HWMODE
+config_get HWMODE ${RADIO} hwmode
+[[ "${HWMODE}" != "11g" ]] && exit 0;
+
+date +%s > /tmp/ath9k-reset

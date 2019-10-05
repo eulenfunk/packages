@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local fs = require 'nixio.fs'
+local site = require 'gluon.site_config'
+
+local step_size = site.ath9k_workaround.step_size
+
+local f = io.open('/usr/lib/micron.d/ath9k-blackout-workaround', 'w')
+f:write(string.format('*/%i * * * * /usr/sbin/ath9k-blackout-workaround\n', step_size))
+f:close()
