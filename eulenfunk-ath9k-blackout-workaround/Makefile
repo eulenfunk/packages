@@ -11,8 +11,8 @@ define Package/eulenfunk-ath9k-blackout-workaround
   SECTION:=eulenfunk
   CATEGORY:=Workarounds
   TITLE:=ATH9K-Blackout workaround
-  DEPENDS:=+gluon-core +micrond
-  MAINTAINER:=Freifunk Hochstift <kontakt@hochstift.freifunk.net>
+  DEPENDS:=+gluon-core +micrond +luci-lib-nixio
+  MAINTAINER:=Eulenfunk <git://github.com/eulenfunk/packages>
 endef
 
 define Package/eulenfunk-ath9k-blackout-workaround/description
