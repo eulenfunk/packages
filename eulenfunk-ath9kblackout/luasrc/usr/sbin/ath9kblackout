@@ -52,8 +52,8 @@ if check_wifi() or not fs.readfile(fileOk) then
   os.exit(0)
 end
 
-local blackout_wait_secs = site.ath9kworkaround.blackoutwait * 60
-local reset_wait_secs = site.ath9kworkaround.resetwait * 60
+local blackout_wait_secs = site.ath9kblackout.blackoutwait * 60
+local reset_wait_secs = site.ath9kblackout.resetwait * 60
 
 if os.difftime(os.time(), tonumber(fs.readfile(fileReset))) <= reset_wait_secs then
   os.exit(0)
@@ -63,6 +63,6 @@ if os.difftime(os.time(), tonumber(fs.readfile(fileOk))) <= blackout_wait_secs t
   os.exit(0)
 end
 
-io.popen('logger -s -t ath9k-blackout-workaround -p local0.info "blackout detected, resart wifi"')
+io.popen('logger -s -t ath9kblackout -p local0.info "blackout detected, resart wifi"')
 time2file(fileReset)
 os.execute('wifi')
