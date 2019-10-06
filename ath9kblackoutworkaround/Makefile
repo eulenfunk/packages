@@ -11,7 +11,7 @@ define Package/ath9kblackoutworkaround
   SECTION:=eulenfunk
   CATEGORY:=Workarounds
   TITLE:=ATH9K-Blackout workaround (Eulenfunk)
-  DEPENDS:=+gluon-core +micrond +luci-lib-nixio
+  DEPENDS:=+gluon-core +micrond
   MAINTAINER:=Eulenfunk <git://github.com/eulenfunk/packages>
 endef
 
