@@ -3,7 +3,7 @@ upgrade_started='/tmp/autoupdate.lock'
 
 [ -f $upgrade_started ] && exit
 
-L2MESH=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v "bat0" | grep -v "local-port"| tr '\n' ' ')
+cliifs=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v "bat0" | grep -v "local-port"| tr '\n' ' ')
 
 APoff=1
 for r in 0 1 2; do
@@ -20,7 +20,7 @@ for r in 0 1 2; do
 
 [ "$APoff" -eq "1" ] && exit 0
 C_MACS=""
-for if in $L2MESH; do
+for if in $cliifs; do
   C_MACS=${C_MACs}$(iw dev $if station dump | grep ^Station | cut -d ' ' -f 2)
  done
 
