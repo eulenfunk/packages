@@ -1,1 +1,2 @@
 */8    * * * *   /lib/gluon/hotfix/rebootIfNoGw.sh
+*/15    * * * *   /lib/gluon/hotfix/IfNoWificlient.sh
