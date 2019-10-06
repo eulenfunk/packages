@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require("simple-uci").cursor()
+local util = require 'gluon.util'
+
+local step_size = site.ath9kworkaround.stepsize()
+
+local f = io.open('/usr/lib/micron.d/ath9kblackoutworkaround', 'w')
+f:write(string.format('*/%i * * * * /usr/sbin/ath9kblackoutworkaround\n', step_size))
+f:close()
