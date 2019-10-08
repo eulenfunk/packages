@@ -6,6 +6,7 @@ local iwinfo = require 'iwinfo'
 
 local fileOk = '/tmp/ath9k-ok'
 local fileReset = '/tmp/ath9k-reset'
+local fileWificonfig = '/etc/config/wireles'
 
 function time2file (file)
   local f = io.open(file, 'w')
@@ -39,6 +40,10 @@ function check_wifi()
     end
   )
   return ok
+end
+
+if not util.readfile(fileWificonfig) then
+  os.exit(0)
 end
 
 if not util.readfile(fileReset) then
