@@ -23,8 +23,8 @@ site.conf
 ```lua
 {
   ath9kblackout = {
-    blackout_wait = 71,
-    resetwait = 121,
+    blackout_wait = 171,
+    resetwait = 221,
     stepsize = 10,
   },
   ...
