@@ -42,7 +42,6 @@ function check_wifi()
   return ok
 end
 
-
 if not util.readfile(fileReset) then
   if not util.readfile(fileWificonfig) then
     os.exit(0)
