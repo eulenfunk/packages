@@ -102,7 +102,7 @@ end
 if interface50 then
         if interface50 == 'radio0' or interface50 == 'radio1' then
                 uci:set('wireless', interface50, 'country', country)
-                VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|sort|tail -n1')
+                VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|sort|tail -n1|tr -d "\n"')
                 if string.match(VHT, 'HT') then
                         uci:set('wireless', interface50, 'htmode', VHT)
                 end
