@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+boot() {
+if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then 
+  /lib/gluon/ch13to9/ch13to9.lua
+  logger -s -t "eulenfunk-ch13to9" -p 5 "ch13to9 executed once, delete self."
+  echo "ch13to9 executed once, delete self." >/tmp/ch13to9.done
+  rm /etc/init.d/ch13to9
+  (sleep 120; rm /etc/rc.d/S99ch13to9)&
+ fi
+}
+
+start() {
+if [ $(uci get gluon-setup-mode.@setup_mode[0].enabled) ] ; then 
+  /lib/gluon/ch13to9/ch13to9.lua
+  logger -s -t "eulenfunk-ch13to9" -p 5 "ch13to9 executed once, delete self."
+  echo "ch13to9 executed once, delete self." >/tmp/ch13to9.done
+  rm /etc/init.d/ch13to9
+  (sleep 120; rm /etc/rc.d/S99ch13to9)&
+ fi
+}
