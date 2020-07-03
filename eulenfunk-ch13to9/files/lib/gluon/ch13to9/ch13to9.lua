@@ -44,7 +44,7 @@ if interface24 then
         if channel24 == '13' then
                 newchannel24 = '9' 
                 uci:set('wireless', interface24, 'channel', newchannel24)
-	        uci:save('wireless')
-        	uci:commit('wireless')
+		uci:save('wireless')
+		uci:commit('wireless')
         end
 end
