@@ -15,10 +15,20 @@ end
 local interface24 = false
 local interface50 = false
 if uci:get('wireless', 'radio0', 'hwmode') then
-        chanR0 = tonumber(uci:get('wireless', 'radio0', 'channel'))
+        chanR0string = uci:get('wireless', 'radio0', 'channel')
+        if tonumber( chanR0string ) ~= nil then  --- bypass 'auto'
+                chanR0 = tonumber(chanR0string)
+        else
+                chanR0 = 999
+        end
         if chanR0 < 16 then
                 interface24 = 'radio0'
-                chanR1 = tonumber(uci:get('wireless', 'radio1', 'channel'))
+	        chanR1string = uci:get('wireless', 'radio1', 'channel')
+        	if tonumber( chanR1string ) ~= nil then  --- bypass 'auto'
+                	chanR1 = tonumber(chanR1string)
+	        else
+        	        chanR1 = 999
+	        end
                 if chanR1 then
                         if chanR1 > 15 then
                                interface50 = 'radio1'
@@ -26,7 +36,12 @@ if uci:get('wireless', 'radio0', 'hwmode') then
                 end
         elseif chanR0 > 15  then
                 interface50 = 'radio0'
-                chanR1 = tonumber(uci:get('wireless', 'radio1', 'channel'))
+	        chanR1string = uci:get('wireless', 'radio1', 'channel')
+        	if tonumber( chanR1string ) ~= nil then  --- bypass 'auto'
+                	chanR1 = tonumber(chanR1string)
+	        else
+        	        chanR1 = 999
+	        end
                 if chanR1 then
                         if chanR1 < 16 then
                                 interface24 = 'radio1'
@@ -109,7 +124,7 @@ if interface50 then
                 --- set values (1st pass)
                 uci:save('wireless')
                 uci:commit('wireless')
-                t = cmd('sleep 2')
+                t = cmd('sleep 1')
                 t = cmd('/sbin/wifi')
                 t = cmd('sleep 10')
                 --- get maximum available power and step
@@ -130,7 +145,7 @@ if interface50 then
                 uci:save('wireless')
                 uci:commit('wireless')
         end
-        t = cmd('sleep 2')
+        t = cmd('sleep 1')
         t = cmd('/sbin/wifi')
-        t = cmd('sleep 2')
+        t = cmd('sleep 1')
 end
