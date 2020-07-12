@@ -65,6 +65,10 @@ if os.difftime(os.time(), tonumber(util.readfile(fileOk))) <= blackout_wait_secs
   os.exit(0)
 end
 
-io.popen('logger -s -t ath9kblackout -p local0.info "blackout detected, resart wifi"')
+io.popen('logger -s -t ath9kblackout -p local0.info "blackout detected, restart wifi"')
 time2file(fileReset)
-os.execute('wifi')
+os.execute('wifi down')
+os.execute('killall hostapd')
+os.execute('rm -f /var/run/wifi-*.pid')
+os.execute('wifi config')
+os.execute('wifi up')

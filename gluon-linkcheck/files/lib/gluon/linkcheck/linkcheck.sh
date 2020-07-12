@@ -30,7 +30,7 @@ valuecheck ()
         else
           logger -s -t "gluon-linkcheck" -p 5 "still no neighbours $linkname.$check, wifi restart"
           echo 1>/tmp/linkcheck.$linkname.$check.linkpb2
-          /sbin/wifi
+          wifi down; killall hostapd;rm -f /var/run/wifi-*.pid; wifi config; wifi up
           sleep 10
         fi
       else

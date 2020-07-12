@@ -31,7 +31,11 @@ if [ -z "$C_MACS" ] ; then
       logger -s -t "hotfix-IfNoWificlient" -p 5 "wireless stations disappeared for long, restarting Wifi"
       rm -f /tmp/WifiClients 2>/dev/null
       rm -f /tmp/NoWiCli.* 2>/dev/null
-      wifi
+      wifi down
+      killall hostapd
+      rm -f /var/run/wifi-*.pid
+      wifi config
+      wifi up
     elif [ -f /tmp/NoWiCli.2 ] ; then
       touch /tmp/NoWiCli.3
     elif [ -f /tmp/NoWiCli.1 ] ; then
