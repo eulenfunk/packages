@@ -1,28 +1,41 @@
 # Eulenfunk Packages
 
-This branch works for gluon 2018.1.x.
+This branch works for gluon 2020.1.x.
 
-### gluon-aptimeclock
+### eulenfunk-ath9kblackout ###
 
-Turn on/off client AP by cron. A script that will turn off the client AP network
-during definable times via UCI. See [](gluon-aptimeclock/README.md)
+looks for dying ath9-wifichips and reintializes wifi (in a reliable way even for DFS-aware gluon)
+
+### eulenfunk-ch13to9 ###
+
+moves radios from ch13 to 9 during firmwareupdate, even if "keep-wifichannels" is set. 
+This is done for compatblity issues with certain android(tm) devices, refusing to work on ch13 in EU region. 
+
+### eulenfunk-hotfix
+
+Hotfix-collection-VFN: Reboot if no Wifi clients or if no Gateway connection, 
+looking for 
+- disappeared batman-gw (failing batman transglobal tables) 
+- disappeared:ac1/64 anycast (failing iv6<>batman binding)
+- divers kernel/malloc issues if device is on the way down to freeze
+- frozen wifi driver 
+- ap with disappeared clients for long time
+- dfs-scan pannics 
+- hostapd with non matching pid-files, rendered disfunctional
+- illogical high number of tunneldigger clients active at the same time
+
+### eulenfunk-migrate-upgradebranch ###
+
+moving upgradebranch from experimental to stable systematically
+and removing l2tp from branches
 
 ### gluon-banner
 
 Banner file replacement, Some nice messages on login and more aliases set.
 
-### gluon-hotfix
-
-Hotfix-collection-VFN: Reboot if no Wifi clients or if no Gateway connection.
-
 ### gluon-linkcheck
 
-WIFI-Neighborcheck. See [](gluon-linkcheck/README.md)
-
-### gluon-quickfix
-
-Reboot under certain conditions (loss of mesh neighbours, broken client wifi,
-unsuccessful anycast ping). See [](gluon-quickfix/README.md)
+WIFI-Neighborcheck. check if interfaces with previously 2 and more neighbors have lost all neigbors for longer, see [](gluon-linkcheck/README.md)
 
 ### gluon-ssid-changer
 
@@ -37,10 +50,6 @@ Fixes txpower on some wifi nodes since OpenWrt chaos calmer by setting the
 country code to 00/BO so it can be set to higher values than the incorrectly
 configured german code allows. See [](gluon-txpowerfix/README.md)
 
-### gluon-vpnlimittimeclock
-
-Turn on/off the bandwitdth limit for vpn-usage by cron schedule. See
-[](gluon-vpnlimittimeclock/README.md)
 
 ### gluon-weeklyreboot
 
