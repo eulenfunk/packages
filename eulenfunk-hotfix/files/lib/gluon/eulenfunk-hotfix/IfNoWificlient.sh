@@ -32,8 +32,8 @@ if [ -z "$C_MACS" ] ; then
       rm -f /tmp/WifiClients 2>/dev/null
       rm -f /tmp/NoWiCli.* 2>/dev/null
       wifi down
-      killall hostapd
-      rm -f /var/run/wifi-*.pid
+      killall hostapd >/dev/null 2>&1
+      rm -f /var/run/wifi-*.pid >/dev/null 2>&1
       wifi config
       wifi up
     elif [ -f /tmp/NoWiCli.2 ] ; then
