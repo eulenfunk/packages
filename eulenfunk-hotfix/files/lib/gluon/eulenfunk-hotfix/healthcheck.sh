@@ -25,6 +25,15 @@ now_reboot() {
   logger -s -t "gluon-healthcheck" -p 5 "no reboot during first hour"
 }
 
+restart_wifi() { 
+  wifi down
+  killall hostapd 2>/dev/null
+  rm -f /var/run/wifi-*.pid 2>/dev/null
+  wifi config
+  wifi up
+}
+
+
 # don't do anything the first 10 minutes
 [ "$(sed 's/\..*//g' /proc/uptime)" -gt "600" ] || safety_exit "uptime low!"
 
@@ -43,6 +52,21 @@ dmesg | grep -q "Kernel bug" && now_reboot "gluon issue #680"
 # ath/ksoftirq-malloc-errors (upcoming oom scenario)
 dmesg | grep "ath" | grep "alloc of size" | grep -q "failed" && now_reboot "ath0 malloc fail"
 dmesg | grep "ksoftirqd" | grep -q "page allcocation failure" && now_reboot "kernel malloc fail"
+# interate over hostapd threads running 
+ps|grep hostapd|grep .pid|xargs -n 10 /lib/gluon/eulenfunk-hotfix/check_hostapd.sh
+#check if hostapd-DFS scanning is broken according to sylogs
+if [ $(logread -l 5|grep -c  "daemon.warn hostapd: Failed to check if DFS is required") -gt 0 ] ; then
+  if [ -f /tmp/dfscheckfail.2 ] ; then
+    logger -s t "eulenfunk-healthcheck" "hostapd DFS failcheck, restarting wifi"
+    restart_wifi
+    sleep 10
+   elif [ -f /tmp/dfscheckfail.1 ] ; then
+    touch /tmp/dfscheckfail.2
+   else
+    touch /tmp/dfscheckfail.1
+   fi
+ fi
+
 
 # too many tunneldigger restarts
 [ "$(ps |grep -c -e tunneldigger\ restart -e tunneldigger-watchdog)" -ge "9" ] && now_reboot "too many Tunneldigger-Restarts"

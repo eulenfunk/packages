@@ -29,6 +29,7 @@ define Package/$(PKG_NAME)/install
 	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/rebootIfNoGw.sh 
 	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/rebootIfNoGw.sh
 	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/healthcheck.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/check_hostapd.sh
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
