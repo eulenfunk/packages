@@ -18,15 +18,16 @@ if [[ $(echo $phy|grep 'phy') ]] ; then # extrem schlechter Stil, leider kein =~
   if [[ $pid == $pspid ]] ; then
     touch $sema.ok.$phy
     rm -f $sema.fail.$phy.* 2>/dev/null
-   elif [ -f $sema.fail.$phy.2 ] ; then
-     logger -s -t "eulenfunk-healthcheck" "hostapd restart due to nonmatchings pids on $phy"
-     restart_wifi
-     rm -f $sema.fail.$phy.* 2>/dev/null
-     sleep 10
-   elif [ -f $sema.fail.$phy.1 ] ; then
-     touch $sema.fail.$phy.2
    else
-    touch $sema.fail.$phy.1
+#   elif [ -f $sema.fail.$phy.2 ] ; then
+    logger -s -t "eulenfunk-healthcheck" "hostapd restart due to nonmatchings pids on $phy"
+    restart_wifi
+    rm -f $sema.fail.$phy.* 2>/dev/null
+    sleep 10
+#   elif [ -f $sema.fail.$phy.1 ] ; then
+#     touch $sema.fail.$phy.2
+#   else
+#    touch $sema.fail.$phy.1
    fi
   wifistatus=$(wifi status
   radio="radio"${phy:3:1}
