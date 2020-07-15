@@ -59,12 +59,15 @@ if [ $(logread -l 5|grep -c  "daemon.warn hostapd: Failed to check if DFS is req
   if [ -f /tmp/dfscheckfail.2 ] ; then
     logger -s t "eulenfunk-healthcheck" "hostapd DFS failcheck, restarting wifi"
     restart_wifi
+    rm -f /tmp/dfscheckfail.* 2>/dev/null
     sleep 10
    elif [ -f /tmp/dfscheckfail.1 ] ; then
     touch /tmp/dfscheckfail.2
    else
     touch /tmp/dfscheckfail.1
    fi
+ else
+  rm -f /tmp/dfscheckfail.* 2>/dev/null
  fi
 
 
