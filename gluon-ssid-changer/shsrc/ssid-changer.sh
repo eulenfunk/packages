@@ -174,6 +174,7 @@ if [ $HUP_NEEDED = 1 ]; then
 	if [ -f /lib/gluon/eulenfunk-hotfix/check_hostapd.sh ] ; then 
 	   sleep 2 # settle down
 	   ps|grep hostapd|grep .pid|xargs -n 10 /lib/gluon/eulenfunk-hotfix/check_hostapd.sh
+	fi
 	HUP_NEEDED=0
 	echo "HUP!"
 fi
