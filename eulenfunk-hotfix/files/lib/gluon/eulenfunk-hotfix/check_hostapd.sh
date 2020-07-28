@@ -2,7 +2,7 @@
 # check_hostapd for matching pids
 #!/bin/sh
 restart_wifi() {
-  logger -s t "eulenfunk-checkhostapd" "wifi hard restart"
+  logger -s -t "eulenfunk-checkhostapd" "wifi hard restart"
   wifi down
   killall hostapd 2>/dev/null
   rm -f /var/run/wifi-*.pid 2>/dev/null
