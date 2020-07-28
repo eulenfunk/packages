@@ -1,6 +1,8 @@
 #!/bin/sh
 # check_hostapd for matching pids
+#!/bin/sh
 restart_wifi() {
+  logger -s t "eulenfunk-checkhostapd" "wifi hard restart"
   wifi down
   killall hostapd 2>/dev/null
   rm -f /var/run/wifi-*.pid 2>/dev/null
@@ -33,20 +35,40 @@ if [ ${phy:0:3} = "phy" ] ; then
   wifistatus=$(wifi status)
   radio="radio"${phy:3:1}
   sema="/tmp/wifipending"
-  if [ $(echo $wifistatus|grep -A 6 $radio|cut -d":" -f1-10|grep -c "up: false") -eq 1 ] ; then 
+  if [ $(echo $wifistatus|grep -A 6 $radio|cut -d":" -f1-10|grep -c "up: false") -eq 1 ] ; then
     if [ $(echo $wifistatus|grep -A 6 $radio|cut -d":" -f1-10|grep -c "pending: true") -eq 1 ] ; then
       if [ -f $sema.$radio.2 ] ; then
         logger -s -t "eulenfunk-healthcheck" "hostapd down and pending on $radio"
         restart_wifi
-        rm -f $sema.$phy.* 2>/dev/null
+        rm -f $sema.$radio.* 2>/dev/null
         sleep 10
       elif [ -f $sema.$radio.1 ] ; then
         touch $sema.$radio.2
       else
         touch $sema.$radio.1
-      fi 
+      fi
     else
-      rm -f $sema.$phy.* 2>/dev/null
+      rm -f $sema.$radio.* 2>/dev/null
+    fi
+  fi
+  client="client"${phy:3:1}
+  sema="/tmp/channelunknown"
+  iwstat=$(iwinfo $client info)
+  if [ $(echo $iwstat|grep -i "Mode: Master"|wc -l) -eq 1 ] ; then
+    if [ $(echo $iwstat|grep -i "Channel: unknown"|wc -l) -eq 1 ] ; then
+      if [ -f $sema.$client.2 ] ; then
+        logger -s -t "eulenfunk-healthcheck" "channel $client unknown"
+        restart_wifi
+        rm -f $sema.$client.* 2>/dev/null
+        sleep 10
+      elif [ -f $sema.$client.1 ] ; then
+        touch $sema.$client.2
+      else
+        touch $sema.$client.1
+      fi
+    else
+      rm -f $sema.$client.* 2>/dev/null
     fi
   fi
 fi
+
