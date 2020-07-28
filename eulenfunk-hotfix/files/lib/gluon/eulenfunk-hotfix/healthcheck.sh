@@ -29,6 +29,7 @@ restart_wifi() {
   logger -s -t "eulenfunk-healthcheck" "wifi hard restart"
   wifi down
   killall hostapd 2>/dev/null
+  rm -f /tmp/hostapd.*.core 2>/dev/null
   rm -f /var/run/wifi-*.pid 2>/dev/null
   wifi config
   wifi up
