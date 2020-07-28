@@ -17,7 +17,7 @@ if [ ${phy:0:3} = "phy" ] ; then
   pid=$(cat $pidfile 2>/dev/null)
   sema="/tmp/hostapdpid"
   if [ "$pid" = "${pspid%% *}" ] ; then
-    rm -f $sema.fail.$phy.* 2>/dev/null
+    rm -f $sema.fail.$phy 2>/dev/null
     touch $sema.ok.$phy
   else
     touch $sema.fail.$phy
@@ -27,8 +27,8 @@ if [ ${phy:0:3} = "phy" ] ; then
     if [ "$pid" = "${pspid%% *}" ] ; then
       logger -s -t "eulenfunk-healthcheck" "hostapd restart due to nonmatchings pids on $phy"
       restart_wifi
-      rm -f $sema.fail.$phy.* 2>/dev/null
-      rm -f $sema.ok.$phy.* 2>/dev/null
+      rm -f $sema.fail.$phy 2>/dev/null
+      rm -f $sema.ok.$phy 2>/dev/null
       sleep 10
     fi
   fi
