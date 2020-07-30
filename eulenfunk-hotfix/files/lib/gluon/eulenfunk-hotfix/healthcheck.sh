@@ -37,7 +37,7 @@ restart_wifi() {
 
 
 # don't do anything the first 10 minutes
-[ "$(sed 's/\..*//g' /proc/uptime)" -gt "600" ] || safety_exit "uptime low!"
+[ "$(sed 's/\..*//g' /proc/uptime)" -gt "600" ] || safety_exit "no check due to uptime low!"
 
 # check for stale autoupdater
 if [ -f /tmp/autoupdate.lock ] ; then

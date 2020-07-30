@@ -38,18 +38,19 @@ if [ ${phy:0:3} = "phy" ] ; then
   sema="/tmp/wifipending"
   if [ $(echo $wifistatus|grep -A 6 $radio|cut -d":" -f1-10|grep -c "up: false") -eq 1 ] ; then
     if [ $(echo $wifistatus|grep -A 6 $radio|cut -d":" -f1-10|grep -c "pending: true") -eq 1 ] ; then
-      if [ -f $sema.$radio.2 ] ; then
+      if [ -f $sema.fail.$radio.2 ] ; then
         logger -s -t "eulenfunk-healthcheck" "hostapd down and pending on $radio"
         restart_wifi
-        rm -f $sema.$radio.* 2>/dev/null
+        rm -f $sema.fail.$radio.* 2>/dev/null
         sleep 10
-      elif [ -f $sema.$radio.1 ] ; then
-        touch $sema.$radio.2
+      elif [ -f $sema.fail.$radio.1 ] ; then
+        touch $sema.fail.$radio.2
       else
-        touch $sema.$radio.1
+        touch $sema.fail.$radio.1
       fi
     else
-      rm -f $sema.$radio.* 2>/dev/null
+      rm -f $sema.fail.$radio.* 2>/dev/null
+      touch $sema.ok.$radio
     fi
   fi
   client="client"${phy:3:1}
@@ -57,18 +58,19 @@ if [ ${phy:0:3} = "phy" ] ; then
   iwstat=$(iwinfo $client info)
   if [ $(echo $iwstat|grep -i "Mode: Master"|wc -l) -eq 1 ] ; then
     if [ $(echo $iwstat|grep -i "Channel: unknown"|wc -l) -eq 1 ] ; then
-      if [ -f $sema.$client.2 ] ; then
+      if [ -f $sema.fail.$client.2 ] ; then
         logger -s -t "eulenfunk-healthcheck" "channel $client unknown"
         restart_wifi
-        rm -f $sema.$client.* 2>/dev/null
+        rm -f $sema.fail.$client.* 2>/dev/null
         sleep 10
-      elif [ -f $sema.$client.1 ] ; then
-        touch $sema.$client.2
+      elif [ -f $sema.fail.$client.1 ] ; then
+        touch $sema.fail.$client.2
       else
-        touch $sema.$client.1
+        touch $sema.fail.$client.1
       fi
     else
-      rm -f $sema.$client.* 2>/dev/null
+      rm -f $sema.fail.$client.* 2>/dev/null
+      touch $sema.ok.$client
     fi
   fi
 fi
