@@ -9,6 +9,7 @@ restart_wifi() {
   rm -f /var/run/wifi-*.pid 2>/dev/null
   wifi config
   wifi up
+  sleep 60
 }
 
 pspid="$1"
@@ -22,7 +23,6 @@ if [ ${phy:0:3} = "phy" ] ; then
     touch $sema.ok.$phy
   else
     touch $sema.fail.$phy
-    sleep 20
     pspid=$(ps|grep hostapd|grep $phy)
     pid=$(cat $pidfile 2>/dev/null)
     if [ "$pid" = "${pspid%% *}" ] ; then
@@ -43,7 +43,6 @@ if [ ${phy:0:3} = "phy" ] ; then
         restart_wifi
         rm -f $sema.fail.$radio.* 2>/dev/null
         rm -f $sema.ok.$radio.* 2>/dev/null
-        sleep 10
       elif [ -f $sema.fail.$radio.1 ] ; then
         touch $sema.fail.$radio.2
       else
@@ -64,7 +63,6 @@ if [ ${phy:0:3} = "phy" ] ; then
         restart_wifi
         rm -f $sema.fail.$client.* 2>/dev/null
         rm -f $sema.ok.$client.* 2>/dev/null
-        sleep 10
       elif [ -f $sema.fail.$client.1 ] ; then
         touch $sema.fail.$client.2
       else
