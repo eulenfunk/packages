@@ -5,14 +5,14 @@
 UPDATEWAIT='60'
 
 safety_exit() {
-  logger -s -t "gluon-healthcheck" "safety checks failed $@, exiting with error code 2"
+  logger -s -t "eulenfunk-healthcheck" "safety checks failed $@, exiting with error code 2"
   exit 2
 }
 
 now_reboot() {
   # first parameter message
   # second optional -f to force reboot even if autoupdater is running
-  logger -s -t "gluon-healthcheck" -p 5 "rebooting... reason: $1"
+  logger -s -t "eulenfunk-healthcheck" -p 5 "rebooting... reason: $1"
   if [ "$(sed 's/\..*//g' /proc/uptime)" -gt "3600" ] ; then
     LOG=/lib/gluon/healthcheck/reboot.log
     # the first 5 times log the reason for a reboot in a file that is rebootsave
@@ -22,7 +22,7 @@ now_reboot() {
     fi
     /sbin/reboot -f
   fi
-  logger -s -t "gluon-healthcheck" -p 5 "no reboot during first hour"
+  logger -s -t "eulenfunk-healthcheck" -p 5 "no reboot during first hour"
 }
 
 restart_wifi() { 
@@ -103,7 +103,7 @@ iw_dev_reboot_freeze() {
 
 scan() {
   # call iw $dev scan to repair defunc wifi
-  logger -s -t "gluon-healthcheck" -p 5 "neighbour lost, running iw scan"
+  logger -s -t "eulenfunk-healthcheck" -p 5 "neighbour lost, running iw scan"
   iw_dev_reboot_freeze 30 $1 scan lowpri passive>/dev/null
 }
 
