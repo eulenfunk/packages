@@ -42,6 +42,7 @@ if [ ${phy:0:3} = "phy" ] ; then
         logger -s -t "eulenfunk-healthcheck" "hostapd down and pending on $radio"
         restart_wifi
         rm -f $sema.fail.$radio.* 2>/dev/null
+        rm -f $sema.ok.$radio.* 2>/dev/null
         sleep 10
       elif [ -f $sema.fail.$radio.1 ] ; then
         touch $sema.fail.$radio.2
@@ -62,6 +63,7 @@ if [ ${phy:0:3} = "phy" ] ; then
         logger -s -t "eulenfunk-healthcheck" "channel $client unknown"
         restart_wifi
         rm -f $sema.fail.$client.* 2>/dev/null
+        rm -f $sema.ok.$client.* 2>/dev/null
         sleep 10
       elif [ -f $sema.fail.$client.1 ] ; then
         touch $sema.fail.$client.2
