@@ -8,24 +8,10 @@ if [ "$GLUON_SITECODE" = "ffnef-erk" ] && [ "$UPDATE_BRANCH" = "stablel2tp" ]; t
   uci set autoupdater.settings.branch='stable'
  fi
 
-# remove deprecated l2tp-branch
-if [ "$UPDATE_BRANCH" = "stablel2tp" ]; then
-  uci set autoupdater.settings.branch='stable'
- fi
-if [ "$UPDATE_BRANCH" = "betal2tp" ]; then
-  uci set autoupdater.settings.branch='beta'
- fi
-if [ "$UPDATE_BRANCH" = "experimentall2tp" ]; then
-  uci set autoupdater.settings.branch='experimental'
- fi
- 
 # shifting from beta to stable systematically 
 # (this is a design decision since stable regularly is ahead of beta until new beta versions are published) 
-if [[ $GLUON_SITECODE == "ffnef-"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
-  uci set autoupdater.settings.branch='stable'
- fi
-
-if [[ $GLUON_SITECODE == "si"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
+# if [[ $GLUON_SITECODE == "nef-"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
+if [ "$UPDATE_BRANCH" = "beta" ]; then
   uci set autoupdater.settings.branch='stable'
  fi
 
