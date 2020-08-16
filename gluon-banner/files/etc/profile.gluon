@@ -1,6 +1,8 @@
 #!/bin/sh
 [ -f /etc/banner ] && cat /etc/banner
-echo -n "time='"$(date '+%A %d/%m/%Y %H:%M:%S')"' - uptime="
+echo -n "time='"$(date '+%A %d/%m/%Y %H:%M:%S')"'"
+echo -n " - HopPenalty="; if [ -f /sys/class/net/bat0/mesh/hop_penalty ] ; then cat /sys/class/net/bat0/mesh/hop_penalty|tr -d "\n" ; else echo -n '.'; fi
+echo -n " - uptime="
 uptime
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin
 export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
@@ -36,3 +38,7 @@ alias cd..="cd .."
 alias myip="echo -n 'ifconfig' && ifconfig |head|tail -n1 && echo 'from ssh : ' $SSH_CONNECTION"
 alias status="source /etc/profile"
 alias ll="ls -la"
+
+
+
+echo -n " - HP="; if [ -f /sys/class/net/bat0/mesh/hop_penalty ] ; then cat /sys/class/net/bat0/mesh/hop_penalty ; else echo '-'; fi
