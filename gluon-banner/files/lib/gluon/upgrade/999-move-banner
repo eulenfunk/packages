@@ -1,9 +1,0 @@
-#!/bin/sh
-if [ -f /etc/banner.gluon ] ; then
-	rm -rf /etc/banner
-	/bin/ln -s /etc/banner.gluon /etc/banner 
-fi
-if [ -f /etc/profile.gluon ] ; then
-	rm -rf /etc/profile
-	/bin/ln -s /etc/profile.gluon /etc/profile
-fi

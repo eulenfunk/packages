@@ -38,7 +38,3 @@ alias cd..="cd .."
 alias myip="echo -n 'ifconfig' && ifconfig |head|tail -n1 && echo 'from ssh : ' $SSH_CONNECTION"
 alias status="source /etc/profile"
 alias ll="ls -la"
-
-
-
-echo -n " - HP="; if [ -f /sys/class/net/bat0/mesh/hop_penalty ] ; then cat /sys/class/net/bat0/mesh/hop_penalty ; else echo '-'; fi

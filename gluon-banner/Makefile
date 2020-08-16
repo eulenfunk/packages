@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	Banner file replacement
+	Banner file replacement + Tooling
 endef
 
 define Build/Prepare
@@ -82,6 +82,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/
 	$(INSTALL_DATA) ./files/etc/banner.gluon $(1)/etc/
+	$(INSTALL_DATA) ./files/etc/profile.gluon $(1)/etc/
 	$(CP) ./files/* $(1)/
 endef
 
