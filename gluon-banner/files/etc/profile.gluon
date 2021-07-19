@@ -29,6 +29,7 @@ export VPNon="'0'"
 [ "$(uci show|grep gluon.mesh_vpn.enabled|cut -d"=" -f2)" == "'1'" ] && export VPNon="'1'"
 [ "$(uci show|grep tunneldigger.mesh_vpn.enabled|cut -d"=" -f2)" == "'1'" ] &&  export VPNon="'1'"
 echo MoL.off=$MoLoff MoW.off=$MoWoff LAN=$ifLAN WAN=$ifWAN LANCLI=$lanCLI CLI=$ifCLI
+echo switch: $(swconfig dev switch0 show | grep 'link:'|sed -e 's/link://g' -e 's/port/p/g' -e 's/speed://g' -e 's/baseT//g' -e 's/ full-duplex/fdx/g' -e 's/ half-duplex/hdx/g' -e 's/flow/f/g' -e 's/\t//g' -e 's/$/;/g' -e 's/ ;/;/g')
 echo "########################################"
 ([ "$VPNon" == "'1'" ] && [ "$MoWoff" == "'0'" ]) && echo ALARM! MoW-VPN-Konflikt?
 ([ "$MoLoff" == "'0'" ] && [ "$ifCLI" == "$ifLAN" ]) && echo ALARM! MoL-CLI-Konflikt?
