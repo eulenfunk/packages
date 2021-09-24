@@ -14,4 +14,4 @@ echo " autoupdater -f                    // Firmware-Update erzwingen
  iw dev client0 station dump       // WLAN Nachbarn mit Details
  nodeinfo                          // diverse infos ausgegeben
  v4up                              // ipv4 holen, wenn kein vpnuplink"
- switchstatus                      // show port status of eth
+ switchstatus  // switch0          // show port status of eth ifs 

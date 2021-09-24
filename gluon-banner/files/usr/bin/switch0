@@ -1,0 +1,2 @@
+#!/bin/sh
+echo switch0: $(swconfig dev switch0 show | grep 'link:'|sed -e 's/link://g' -e 's/port:/p/g' -e 's/speed://g' -e 's/baseT//g' -e 's/ full-duplex/fdx/g' -e 's/ half-duplex/hdx/g' -e 's/flow/f/g' -e 's/\t//g' -e 's/$/;/g' -e 's/ ;/;/g')
