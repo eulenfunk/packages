@@ -1,12 +1,12 @@
 #! /bin/sh
-mname=$(uci get wireless.ibss_radio0.ifname) || mname=$(uci get wireless.mesh_radio0.ifname)
-if [ -z "$mname" ] ; then
+mname=$(uci get wireless.mesh_radio0.ifname)
+bssid=$(uci get wireless.mesh_radio0.mesh_id)
+if [ -z "$mname" ] || [ -z "$bssid" ]; then
   exit 0
  else
   echo radio: $mname
   wmesh=$(iw dev $mname scan|grep $mname|wc -l)
   sleep 4 # this is a hack
-  bssid=$(uci get wireless.ibss_radio0.bssid)
   neighbours=$(iw dev $mname scan|grep $bssid|wc -l)
   sleep 4 
   mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
