@@ -66,14 +66,13 @@ for batm in $batmeshs; do
   else
    result=$(batctl o|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
   fi
-
   check=$batm
   wert=$result
   valuecheck $check
 done
 
 checks=""
-links="wireless.ibss_radio0.ifname wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.ibss_radio1.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname"
+links="wireless.mesh_radio0.mesh_id wireless.mesh_radio1.mesh_id wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.ibss_radio1.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname"
 for link in $links; do
   linkname=$(uci get $link 2>/dev/null)
   if [ ! -z "$linkname" ] ; then
