@@ -57,14 +57,14 @@ valuecheck ()
 
 upgrade_started='/tmp/autoupdate.lock'
 [ -f $upgrade_started ] && exit
-batversion=$(batctl -v |cut -d" " -f 2|tr -d '.')
+batversion=$(batctl -v |cut -d" " -f 2|grep -o '[0-9]\+'| tr -d '\012\015')
 linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
 for batm in $batmeshs; do
   if [ $batversion -gt 20163 ] ; then
-   result=$(batctl o|grep "^\ \*"|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+   result=$(batctl n|grep mesh0|awk '{print $2}'|sort|uniq|wc -l)
   else
-   result=$(batctl o|grep $batm|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
+   result=$(batctl n|grep mesh0|awk '{print $2}'|sort|uniq|wc -l)
   fi
   check=$batm
   wert=$result
@@ -72,7 +72,7 @@ for batm in $batmeshs; do
 done
 
 checks=""
-links="wireless.mesh_radio0.mesh_id wireless.mesh_radio1.mesh_id wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.ibss_radio1.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname"
+links="wireless.mesh_radio0.mesh_id wireless.mesh_radio1.mesh_id wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname"
 for link in $links; do
   linkname=$(uci get $link 2>/dev/null)
   if [ ! -z "$linkname" ] ; then
