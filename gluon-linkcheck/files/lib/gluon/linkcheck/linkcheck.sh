@@ -80,17 +80,23 @@ for link in $links; do
     linksexist="$linksexist $link"
    fi
 done
+rm /tmp/linkcheck.iwscan.* 2>/dev/null
 
 for linkexist in $linksexist; do
   linkname=$(uci get $linkexist.ifname)
-  bsses=$(iw dev $linkname scan lowpri passive|grep $linkname|wc -l)
-  sleep 8
+  iwfile=/tmp/linkcheck.iwscan.$(uci get $linkexist.device)
+  if [ ! -f $iwfile ] ; then
+    sleep 4
+    iw dev $linkname scan lowpri passive > $iwfile
+    sleep 4
+   fi
+  bsses=$(cat $iwfile|grep "BSS .*:.*:.*:.*:.*:.*(on.*)"|wc -l)
+  unset bssid
   bssid=$(uci get $linkexist.mesh_id 2>/dev/null)
   if [ -z "$bssid" ] ; then
     bssid=$(uci get $linkexist.ssid)
    fi
-  neighbours=$(iw dev $linkname scan lowpri passive|grep $bssid|wc -l)
-  sleep 2
+  neighbours=$(cat $iwfile|grep $bssid|wc -l)
   checks="neighbours bsses"
   for check in $checks; do
     wert=$(eval echo \$$check)
