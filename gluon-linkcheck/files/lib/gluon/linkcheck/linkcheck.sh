@@ -38,7 +38,7 @@ valuecheck ()
           sleep 10
         fi
       else
-        logger -s -t "gluon-linkcheck" -p 5 "lost neighbours $linkname.$check."
+        logger -s -t "gluon-linkcheck" -p 5 "lost neighbours $linkname.$check"
         echo 1>/tmp/linkcheck.$linkname.$check.linkpb1
       fi
     else
@@ -72,19 +72,25 @@ for batm in $batmeshs; do
 done
 
 checks=""
-links="wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname wireless.mesh_radio2.ifname wireless.batmesh_radio2.ifname"
+linksexist=""
+links="wireless.mesh_radio0 wireless.batmesh_radio0 wireless.mesh_radio1 wireless.batmesh_radio1 wireless.mesh_radio2 wireless.batmesh_radio2 wireless.client_radio0 wireless.client_radio1 wireless.client_radio2"
 for link in $links; do
-  linkname=$(uci get $link 2>/dev/null)
+  linkname=$(uci get $link.ifname 2>/dev/null)
   if [ ! -z "$linkname" ] ; then
-    linknames="$linknames $linkname"
-  fi
+    linksexist="$linksexist $link"
+   fi
 done
 
-for linkname in $linknames; do
+for linkexist in $linksexist; do
+  linkname=$(uci get $linkexist.ifname)
   bsses=$(iw dev $linkname scan lowpri passive|grep $linkname|wc -l)
-  sleep 8 # this is a hack
-  bssid=$(uci get wireless.mesh_radio0.mesh_id)
+  sleep 8
+  bssid=$(uci get $linkexist.mesh_id 2>/dev/null)
+  if [ -z "$bssid" ] ; then
+    bssid=$(uci get $linkexist.ssid)
+   fi
   neighbours=$(iw dev $linkname scan lowpri passive|grep $bssid|wc -l)
+  sleep 2
   checks="neighbours bsses"
   for check in $checks; do
     wert=$(eval echo \$$check)
