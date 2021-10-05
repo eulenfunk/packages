@@ -5,9 +5,9 @@ if [ -z "$mname" ] || [ -z "$bssid" ]; then
   exit 0
  else
   echo radio: $mname
-  wmesh=$(iw dev $mname scan|grep $mname|wc -l)
+  wmesh=$(iw dev $mname scan lowpri passive|grep $mname|wc -l)
   sleep 4 # this is a hack
-  neighbours=$(iw dev $mname scan|grep $bssid|wc -l)
+  neighbours=$(iw dev $mname scan lowpri passive|grep $bssid|wc -l)
   sleep 4 
   mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)
   logger -s -t "gluon-wificheck" -p 5 "ibss-bat-neighbours: $mesh wifiadhocs-neighbours: $wmesh wifimesh-neighbours: $neighbours"

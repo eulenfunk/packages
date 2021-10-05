@@ -62,9 +62,9 @@ linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
 for batm in $batmeshs; do
   if [ $batversion -gt 20163 ] ; then
-   result=$(batctl n|grep mesh0|awk '{print $2}'|sort|uniq|wc -l)
+   result=$(batctl n|grep $batm|awk '{print $2}'|sort|uniq|wc -l)
   else
-   result=$(batctl n|grep mesh0|awk '{print $2}'|sort|uniq|wc -l)
+   result=$(batctl n|grep $batm|awk '{print $2}'|sort|uniq|wc -l)
   fi
   check=$batm
   wert=$result
