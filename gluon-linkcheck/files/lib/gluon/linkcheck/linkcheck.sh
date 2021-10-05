@@ -72,7 +72,7 @@ for batm in $batmeshs; do
 done
 
 checks=""
-links="wireless.mesh_radio0.mesh_id wireless.mesh_radio1.mesh_id wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname"
+links="wireless.mesh_radio0.ifname wireless.batmesh_radio0.ifname wireless.mesh_radio1.ifname wireless.batmesh_radio1.ifname wireless.mesh_radio2.ifname wireless.batmesh_radio2.ifname"
 for link in $links; do
   linkname=$(uci get $link 2>/dev/null)
   if [ ! -z "$linkname" ] ; then
