@@ -91,13 +91,14 @@ for linkexist in $linksexist; do
     sleep 4
    fi
   bsses=$(cat $iwfile|grep "BSS .*:.*:.*:.*:.*:.*(on.*)"|wc -l)
-  unset bssid
-  bssid=$(uci get $linkexist.mesh_id 2>/dev/null)
-  if [ -z "$bssid" ] ; then
-    bssid=$(uci get $linkexist.ssid)
-   fi
-  neighbours=$(cat $iwfile|grep $bssid|wc -l)
-  checks="neighbours bsses"
+#  unset bssid
+#  bssid=$(uci get $linkexist.mesh_id 2>/dev/null)
+#  if [ -z "$bssid" ] ; then
+#    bssid=$(uci get $linkexist.ssid)
+#   fi
+#  neighbours=$(cat $iwfile|grep $bssid|wc -l)
+#  checks="neighbours bsses"
+  checks="bsses"
   for check in $checks; do
     wert=$(eval echo \$$check)
     valuecheck $check
