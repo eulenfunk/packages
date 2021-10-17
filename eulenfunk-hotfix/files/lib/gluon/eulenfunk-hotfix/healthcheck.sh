@@ -55,7 +55,7 @@ dmesg | grep -q "Kernel bug" && now_reboot "gluon issue #680"
 dmesg | grep "ath" | grep "alloc of size" | grep -q "failed" && now_reboot "ath0 malloc fail"
 dmesg | grep "ksoftirqd" | grep -q "page allcocation failure" && now_reboot "kernel malloc fail"
 # interate over hostapd threads running 
-ps|grep hostapd|grep .pid|xargs -n 10 /lib/gluon/eulenfunk-hotfix/check_hostapd.sh
+ps|grep hostapd|grep .pid|xargs -r -n 10 /lib/gluon/eulenfunk-hotfix/check_hostapd.sh
 #check if hostapd-DFS scanning is broken according to sylogs
 if [ $(logread -l 5|grep -c  "daemon.warn hostapd: Failed to check if DFS is required") -gt 0 ] ; then
   if [ -f /tmp/dfscheckfail.2 ] ; then
