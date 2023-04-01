@@ -3,7 +3,7 @@ upgrade_started='/tmp/autoupdate.lock'
 
 [ -f $upgrade_started ] && exit
 
-cliifs=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v "bat0" | grep -v "local-port"| tr '\n' ' ')
+cliifs=$(/usr/sbin/brctl show | sed -n -e '/^br-client[[:space:]]/,/^\S/ { /^\(br-client[[:space:]]\|\t\)/s/^.*\t//p }' | grep -v "bat0\|eth\|local-port"| tr '\n' ' ')
 
 APoff=1
 for r in 0 1 2; do
