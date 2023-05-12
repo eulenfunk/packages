@@ -36,8 +36,8 @@ restart_wifi() {
 }
 
 
-# don't do anything the first 10 minutes
-[ "$(sed 's/\..*//g' /proc/uptime)" -gt "600" ] || safety_exit "no check due to uptime low!"
+# don't do anything the first 60 minutes
+[ "$(sed 's/\..*//g' /proc/uptime)" -gt "3600" ] || safety_exit "no check due to uptime low!"
 
 # check for stale autoupdater
 if [ -f /tmp/autoupdate.lock ] ; then
@@ -85,6 +85,9 @@ fi
 reboot_when_not_running() {
   (pgrep $1 || sleep 20 ; pgrep $1 || now_reboot "$1 not running") &> /dev/null
 }
+
+# check if 5min load >2 (panic reboot)
+[ "$(cat /proc/loadavg|cut -d" " -f3|tr -d .)" -ge "201" ] && now_reboot "Load 5minute-avg exceeds 2!"
 
 # respondd or dropbear not running
 reboot_when_not_running respondd
