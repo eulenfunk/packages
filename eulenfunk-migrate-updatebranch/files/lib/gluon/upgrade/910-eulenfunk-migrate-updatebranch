@@ -3,14 +3,14 @@
 UPDATE_BRANCH=$(uci get autoupdater.settings.branch)
 GLUON_SITECODE=$(lua /lib/gluon/eulenfunk-migrate-updatebranch/sitecode.lua)
 
-# shifting from beta to stable systematically 
-# (this is a design decision since stable regularly is ahead of beta until new beta versions are published) 
-# if [[ $GLUON_SITECODE == "nef-"* ]] && [ "$UPDATE_BRANCH" = "beta" ]; then
-if [ "$UPDATE_BRANCH" = "beta" ]; then
+# shifting from beta/experimental/broken back to stable systematically
+
+if [ "$UPDATE_BRANCH" = "experimental" ] || [ "$UPDATE_BRANCH" = "broken" ] || [ "$UPDATE_BRANCH" = "beta" ]; then
   uci set autoupdater.settings.branch='stable'
  fi
 
 # drop outdated update branches
-uci -q delete autoupdater.broken || true
+uci -q delete autoupdater.experimental || true
+uci -q delete autoupdater.beta || true
 
 uci commit
