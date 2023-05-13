@@ -22,6 +22,7 @@ now_reboot() {
     if [ "$2" != "-f" ] && [ -f /tmp/autoupdate.lock ] ; then
       safety_exit "autoupdate running"
     fi
+    sync
     /sbin/reboot -f
   fi
   logger -s -t "eulenfunk-healthcheck" -p 5 "no reboot during first hour"
