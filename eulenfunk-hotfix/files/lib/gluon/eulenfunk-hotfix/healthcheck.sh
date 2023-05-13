@@ -76,8 +76,8 @@ if [ $(logread -l 5|grep -c  "daemon.warn hostapd: Failed to check if DFS is req
 
 
 # too many tunneldigger restarts
-[ "$(ps |grep -c -e tunneldigger\ restart -e tunneldigger-watchdog)" -ge "4" ] && now_reboot "too many Tunneldigger-Restarts"
-[ "$(ps |ps |grep -c -e "/usr/bin/[t]unneldigger")" -ge "4" ] && now_reboot "too many Tunneldigger-instances"
+[ "$(ps |grep -c -e tunneldigger\ restart -e tunneldigger-watchdog)" -ge "2" ] && now_reboot "too many Tunneldigger-Restarts"
+[ "$(ps |ps |grep -c -e "/usr/bin/[t]unneldigger")" -ge "7" ] && now_reboot "too many Tunneldigger-instances"
 
 # br-client without ipv6 in prefix-range
 if [ "$(ip -6 addr show to "$(jsonfilter -i /lib/gluon/site.json -e '$.prefix6')" dev br-client | grep -c inet6)" == "0" ]; then
