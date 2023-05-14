@@ -105,7 +105,7 @@ iw_dev_reboot_freeze() {
   local p=$!
   sleep $t
   # kill -0 does nothing, but returns true if the process exists
-  kill -0 $p 2>/dev/null && now_reboot "'iw dev $@' freezes for more than $t s"
+  kill -0 $p 2>/dev/null && now_reboot "'iw dev $@ freezes for more than $t s'"
 }
 
 scan() {
