@@ -35,7 +35,7 @@ if [ "$returnval" -ne 0 ] || [ -z "$ipv6_subnet" ]; then
       [ -f $upgrade_started ] && exit
       securereboot
       exit 0
-    elif [ -f /tmp/ip6anycastgone.3 ] ; then
+    elif [ -f /tmp/ip6anycastgone.2 ] ; then
       touch /tmp/ip6anycastgone.3
     elif [ -f /tmp/ip6anycastgone.1 ] ; then
       touch /tmp/ip6anycastgone.2
