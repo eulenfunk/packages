@@ -22,9 +22,9 @@ else
   rm -f /tmp/gwgone.* 2>/dev/null
 fi
 
-ipv6_subnet="$(lua -e 'print(require("gluon.site").prefix6())' | sed -e 's/\/64//')"
+ipv6_subnet="$(ip -6 -o addr show dev br-client| head -1 |awk -v N=4 '{print $N}'|sed -e 's/\/64//'|cut -d":" -f1-4)"
 if [ ! -z "$ipv6_subnet" ]; then
-  ipv6_anycast="${ipv6_subnet}ac1"
+  ipv6_anycast="${ipv6_subnet}::ac1"
   ping6 "$ipv6_anycast" -c 10 >/dev/null 2>&1
   returnval="$?"
 fi
