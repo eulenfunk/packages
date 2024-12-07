@@ -27,6 +27,10 @@ export lanCLI=\'$(echo $ifCLI|sed -r 's/.*(eth[0-9.]{1,3}).*/\1/g'|grep eth)\'
 export WANrole=$(uci show|grep gluon.iface_wan.role|cut -d"=" -f2)
 export LANrole=$(uci show|grep gluon.iface_lan.role|cut -d"=" -f2)
 export batgw=$(batctl gwl|grep ^*|cut -d"[" -f2|cut -d"]" -f1)
+if [ "$(batctl gwl|grep ^*|cut -d"(" -f2|cut -d")" -f1)" -gt "100" ] ; then
+  export publicV6=$(wget -q -6 -O- http://ipecho.net/plain)
+  [ "$(batctl gwl|grep ^*|cut -d"[" -f2|cut -d"]" -f1)" == "  mesh-vpn" ] && export publicV4=$(wget -q -4 -O- http://ipecho.net/plain)
+ fi
 export VPNon="'0'"
 [ "$(uci show|grep gluon.mesh_vpn.enabled|cut -d"=" -f2)" == "'1'" ] && export VPNon="'1'"
 [ "$(uci show|grep tunneldigger.mesh_vpn.enabled|cut -d"=" -f2)" == "'1'" ] &&  export VPNon="'1'"
@@ -39,8 +43,10 @@ echo -n "MoW.off=$MoWoff MoL.off=$MoLoff "
 [ "$MoLoff" == "'0'" ] && echo -n "MoL=$ifMoL "
 echo WAN=$ifWAN LANCLI=$lanCLI CLI=$ifCLI
 fi
+[ -! z "$publicV6" ] && echo -n "PublicV6:$publicV6"
+[ -! z "$publicV4" ] && echo -n "PublicV4:$publicV4"
 [ -x /sbin/swconfig ] && echo switch0: $(swconfig dev switch0 show | grep 'link:'|sed -e 's/link://g' -e 's/port:/p/g' -e 's/speed://g' -e 's/baseT//g' -e 's/ full-duplex/fdx/g' -e 's/ half-duplex/hdx/g' -e 's/flow/f/g' -e 's/\t//g' -e 's/$/;/g' -e 's/ ;/;/g')
-[ ! -z "WANrole" ] && echo "WANrole:$WANrole LANrole:$LANrole"
+[ ! -z "$WANrole" ] && echo "WANrole:$WANrole LANrole:$LANrole" 
 echo "########################################### Contact:'$(uci show|grep contact|cut -d= -f2)'"
 ([ "$VPNon" == "'1'" ] && [ "$MoWoff" == "'0'" ]) && echo ALARM! MoW-VPN-Konflikt?
 ([ "$MoLoff" == "'0'" ] && [ "$ifCLI" == "$ifLAN" ]) && echo ALARM! MoL-CLI-Konflikt?
