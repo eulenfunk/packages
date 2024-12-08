@@ -87,17 +87,17 @@ end
 --- 2.4G
 --- set values (1st pass)
 if interface24 then
-        uci:set('wireless', interface24, 'country', country)
-        uci:set('wireless', interface24, 'htmode', 'HT20')
-        uci:save('wireless')
-        uci:commit('wireless')
-        t = cmd('/sbin/wifi down')
-        t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
-        t = cmd('killall hostapd >/dev/null 2>&1')
-        t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
+	uci:set('wireless', interface24, 'country', country)
+	uci:set('wireless', interface24, 'htmode', 'HT20')
+	uci:save('wireless')
+	uci:commit('wireless')
+	t = cmd('/sbin/wifi down')
+	t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
+	t = cmd('killall hostapd >/dev/null 2>&1')
+	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
 	t = cmd('sleep 1')
 	t = cmd('/sbin/wifi up')
-        t = cmd('sleep 10')
+	t = cmd('sleep 7')
 --- get maximum available power and step
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
         maximumTxPowerDb = string.gsub(t, "\n", "")
@@ -165,5 +165,5 @@ if interface50 then
         t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
 	t = cmd('sleep 1')
 	t = cmd('/sbin/wifi up')
-        t = cmd('sleep 10')
+        t = cmd('sleep 1')
 end
