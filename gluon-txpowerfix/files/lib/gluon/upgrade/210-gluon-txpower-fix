@@ -167,7 +167,7 @@ if interface50 then
         	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
 		t = cmd('/sbin/wifi up')
         	t = cmd('sleep 1')
-		t = cmd('/etc/init.d/network restart')
         end
+	t = cmd('/etc/init.d/network restart')
 end
 	
