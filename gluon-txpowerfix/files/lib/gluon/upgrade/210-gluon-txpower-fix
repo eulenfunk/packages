@@ -3,7 +3,7 @@
 site = require("gluon.site")
 local uci = require("simple-uci").cursor()
 
-setupmode = uci:get('gluon-setup-mode','@setup_mode[0]','enabled')
+
 --- wrapper for calling systemcommands
 function cmd(_command)
         local f = io.popen(_command)
@@ -11,6 +11,10 @@ function cmd(_command)
         f:close()
         return l
 end
+
+t = cmd('ip a |grep 192\.168\.1\.1| grep -c br-setup')
+setupmode = string.gsub(t, "\n", "")
+setupmode = tonumber(setupmode)
 
 --- first of all, get the right 2.4GHz wifi interface
 local interface24 = false
