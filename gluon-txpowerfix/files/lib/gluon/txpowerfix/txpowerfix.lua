@@ -3,6 +3,7 @@
 site = require("gluon.site")
 local uci = require("simple-uci").cursor()
 
+setupmode = uci:get('gluon-setup-mode','@setup_mode[0]','enabled')
 --- wrapper for calling systemcommands
 function cmd(_command)
         local f = io.popen(_command)
@@ -91,13 +92,13 @@ if interface24 then
 	uci:set('wireless', interface24, 'htmode', 'HT20')
 	uci:save('wireless')
 	uci:commit('wireless')
+	t = cmd('/sbin/wifi reconfigure')
 	t = cmd('/sbin/wifi down')
 	t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
 	t = cmd('killall hostapd >/dev/null 2>&1')
 	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
-	t = cmd('sleep 1')
 	t = cmd('/sbin/wifi up')
-	t = cmd('sleep 7')
+	t = cmd('sleep 5')
 --- get maximum available power and step
         t = cmd('iwinfo ' .. interface24 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
         maximumTxPowerDb = string.gsub(t, "\n", "")
@@ -130,13 +131,13 @@ if interface50 then
 			--- set values (1st pass)
        	        	uci:save('wireless')
                		uci:commit('wireless')
+               		t = cmd('/sbin/wifi reconfigure')
                		t = cmd('/sbin/wifi down')
 			t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
 		        t = cmd('killall hostapd >/dev/null 2>&1')
 			t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
-			t = cmd('sleep 1')
 			t = cmd('/sbin/wifi up')
-			t = cmd('sleep 10')
+			t = cmd('sleep 5')
                 	--- get maximum available power and step
                 	t = cmd('iwinfo ' .. interface50 .. ' txpowerlist | tail -n 2 | head -n 1 | awk \'{print $1}\'')
                 	maximumTxPowerDb = string.gsub(t, "\n", "")
@@ -159,11 +160,14 @@ if interface50 then
                 uci:save('wireless')
                 uci:commit('wireless')
         end
-        t = cmd('/sbin/wifi down')
-        t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
-        t = cmd('killall hostapd >/dev/null 2>&1')
-        t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
-	t = cmd('sleep 1')
-	t = cmd('/sbin/wifi up')
-        t = cmd('sleep 1')
+	if setupmode  == '0' then
+	        t = cmd('/sbin/wifi down')
+        	t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
+	        t = cmd('killall hostapd >/dev/null 2>&1')
+        	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
+		t = cmd('/sbin/wifi up')
+        	t = cmd('sleep 1')
+		t = cmd('/etc/init.d/network restart')
+        end
 end
+	
