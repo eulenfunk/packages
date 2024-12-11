@@ -52,9 +52,9 @@ fi
 [ -n "$publicV4" ] && echo -n "PublicV4:$publicV4 "
 [ -x /sbin/swconfig ] && echo -e "\nswitch0: "$(swconfig dev switch0 show | grep 'link:'|sed -e 's/link://g' -e 's/port:/p/g' -e 's/speed://g' -e 's/baseT//g' -e 's/ full-duplex/fdx/g' -e 's/ half-duplex/hdx/g' -e 's/flow/f/g' -e 's/\t//g' -e 's/$/;/g' -e 's/ ;/;/g')
 [ ! -z "$WANrole" ] && echo "WANrole:$WANrole LANrole:$LANrole"
-echo -n "####"
+echo -n "###"
 if [ "$gwgood" == "1" ] ; then
-  echo -n " L2nodes:$l2nodes Tcli:$tclients WLcli:$WLclients Ccli:$cclients ###"
+  echo -n " L2nodes:$l2nodes Tcli:$tclients WLcli:$wlclients Ccli:$cclients ###"
  fi
 echo " Contact:'$(uci show|grep contact|cut -d= -f2)'"
 ([ "$VPNon" == "'1'" ] && [ "$MoWoff" == "'0'" ]) && echo ALARM! MoW-VPN-Konflikt?
