@@ -14,7 +14,7 @@ end
 --- first of all, get the right 2.4GHz wifi interface
 local interface24 = false
 local interface50 = false
-if uci:get('wireless', 'radio0', 'hwmode') then
+if uci:get('wireless', 'radio0', 'htmode') then
         chanR0string = uci:get('wireless', 'radio0', 'channel')
         if tonumber( chanR0string ) ~= nil then  --- bypass 'auto'
                 chanR0 = tonumber(chanR0string)
