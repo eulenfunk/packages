@@ -31,7 +31,7 @@ if [ "$(batctl gwl|grep ^*|cut -d"(" -f2|cut -d")" -f1)" -gt "80" ] ; then
   export publicV6=$(wget -q -6 -O- http://ipecho.net/plain)
   export batgw=$(batctl gwl|grep ^*|cut -d"[" -f2|cut -d"]" -f1)
   export l2nodes=$(batctl o|grep -c "^ \*")
-  export tclients=$(batctl tl|grep -c W)
+  export tclients=$(batctl tg|grep -c W)
   export wlclients=$(batctl tl|grep -c W)
   export cclients=$(batctl tl |grep -c "\.\.\.\.\.\.")
   [ "$(batctl gwl|grep ^*|cut -d"[" -f2|cut -d"]" -f1)" == "  mesh-vpn" ] && export publicV4=$(wget -q -4 -O- http://ipecho.net/plain)
