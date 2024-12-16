@@ -93,7 +93,7 @@ if interface24 then
 	uci:set('wireless', interface24, 'country', country)
 	uci:set('wireless', interface24, 'htmode', 'HT20')
 	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n 1|tail -n1|tr -d "\n"')
-	if string.match(VHT, 'HT', 'HE' ) then
+	if string.match(VHT,'HT') or string.match(VHT,'HE') then
 		uci:set('wireless', interface50, 'htmode', VHT)
         end
 end
@@ -102,7 +102,7 @@ if interface50 then
 		if channel50 ~= 'auto' and uci:get('gluon', 'wireless', 'outdoor') ~= '1' then  --- do't do if outdoor is enabled
 	                uci:set('wireless', interface50, 'country', country)
         	        VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|tail -n1|tr -d "\n"')
-	                if string.match(VHT, 'HT', 'HE' ) then
+	                if string.match(VHT,'HT') or string.match(VHT,'HE') then
         	                uci:set('wireless', interface50, 'htmode', VHT)
                 	end
                 end
