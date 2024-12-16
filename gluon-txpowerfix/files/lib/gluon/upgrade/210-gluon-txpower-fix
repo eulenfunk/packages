@@ -99,7 +99,7 @@ if interface50 then
         if interface50 == 'radio0' or interface50 == 'radio1' then
 		if channel50 ~= 'auto' and uci:get('gluon', 'wireless', 'outdoor') ~= '1' then  --- do't do if outdoor is enabled
 	                uci:set('wireless', interface50, 'country', country)
-        	        VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|sort|tail -n1|tr -d "\n"')
+        	        VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|tail -n1|tr -d "\n"')
 	                if string.match(VHT, 'HT') then
         	                uci:set('wireless', interface50, 'htmode', VHT)
                 	end
@@ -154,7 +154,7 @@ if interfac24 or interface50 then
         	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
 		t = cmd('/sbin/wifi up')
         	t = cmd('sleep 1')
+		t = cmd('/etc/init.d/network restart')
         end
-	t = cmd('/etc/init.d/network restart')
 end
 	
