@@ -91,8 +91,11 @@ end
 --- set HT-modes (1st pass)
 if interface24 then
 	uci:set('wireless', interface24, 'country', country)
+	uci:save('wireless')
+	uci:commit('wireless')
+	t = cmd('/sbin/wifi reconf')
 	uci:set('wireless', interface24, 'htmode', 'HT20')
-	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n 1|grep "80\|40"|tail -n1|tr -d "\n"')
+	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n1|grep -e "80\\|40"|tail -n1|tr -d "\n"')
 	if string.match(VHT,'HT') or string.match(VHT,'HE') then
 		uci:set('wireless', interface24, 'htmode', VHT)
         end
@@ -101,7 +104,10 @@ if interface50 then
         if interface50 == 'radio0' or interface50 == 'radio1' then
 		if channel50 ~= 'auto' and uci:get('gluon', 'wireless', 'outdoor') ~= '1' then  --- do't do if outdoor is enabled
 	                uci:set('wireless', interface50, 'country', country)
-        	        VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n 1|grep "80\|40"|tail -n1|tr -d "\n"')
+			uci:save('wireless')
+			uci:commit('wireless')
+			t = cmd('/sbin/wifi reconf')
+        	        VHT = cmd('iwinfo ' .. interface50 .. ' htmodelist|xargs -n1|grep -e "80\\|40"|tail -n1|tr -d "\n"')
 	                if string.match(VHT,'HT') or string.match(VHT,'HE') then
         	                uci:set('wireless', interface50, 'htmode', VHT)
                 	end
