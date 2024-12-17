@@ -94,7 +94,7 @@ if interface24 then
 	uci:set('wireless', interface24, 'htmode', 'HT20')
 	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n 1|tail -n1|tr -d "\n"')
 	if string.match(VHT,'HT') or string.match(VHT,'HE') then
-		uci:set('wireless', interface50, 'htmode', VHT)
+		uci:set('wireless', interface24, 'htmode', VHT)
         end
 end
 if interface50 then
@@ -114,13 +114,8 @@ uci:commit('wireless')
 
 --- restart with with new ht modes
 if interfac24 or interface50 then
-	t = cmd('/sbin/wifi reconfigure')
-	t = cmd('/sbin/wifi down')
-	t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
-	t = cmd('killall hostapd >/dev/null 2>&1')
-	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
-	t = cmd('/sbin/wifi up')
-	t = cmd('sleep 7')
+	t = cmd('/sbin/wifi reconf')
+	t = cmd('sleep 5')
 end
 
 --- 2.4G 
@@ -153,13 +148,7 @@ if interfac24 or interface50 then
         uci:save('wireless')
         uci:commit('wireless')
 	if setupmode  == '0' then --- restart wifi in case of full operation
-	        t = cmd('/sbin/wifi down')
-        	t = cmd('kill -9  $(ps |grep /usr/sbin/hostapd|grep -v grep|awk \'{print $1}\')')
-	        t = cmd('killall hostapd >/dev/null 2>&1')
-        	t = cmd('rm -f /var/run/wifi-*.pid >/dev/null 2>&1')
-		t = cmd('/sbin/wifi up')
-        	t = cmd('sleep 1')
-		t = cmd('/etc/init.d/network restart')
+	        t = cmd('/sbin/wifi reload')
         end
 end
 	
