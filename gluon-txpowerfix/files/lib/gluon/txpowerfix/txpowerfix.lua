@@ -96,7 +96,7 @@ if interface24 then
 	t = cmd('/sbin/wifi reconf')
 	uci:set('wireless', interface24, 'htmode', 'HT20')
 ---	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n1|grep -v "+"|grep -e "80\\|40"|tail -n1|tr -d "\n"')
-	VHT = 'HT20' 
+	VHT = cmd('iwinfo ' .. interface24 .. ' htmodelist|xargs -n1|grep -v "+"|grep -e "20"|tail -n1|tr -d "\n"')
 	if string.match(VHT,'HT') or string.match(VHT,'HE') then
 		uci:set('wireless', interface24, 'htmode', VHT)
         end
