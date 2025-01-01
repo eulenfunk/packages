@@ -12,7 +12,7 @@ if [ "$UPDATE_BRANCH" = "experimental" ] || [ "$UPDATE_BRANCH" = "broken" ] || [
 # drop outdated update branches
 uci -q delete autoupdater.experimental || true
 uci -q delete autoupdater.stablel2tp || true
-uci -q delete autoupdater.experimentall2to || true
+uci -q delete autoupdater.experimentall2tp || true
 uci -q delete autoupdater.experimental || true
 uci -q delete autoupdater.beta || true
 
