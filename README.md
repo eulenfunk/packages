@@ -1,6 +1,6 @@
 # Eulenfunk Packages
 
-This branch works for gluon 2020.1.x.
+This branch works for gluon 2023.2.x.
 
 ### eulenfunk-ath9kblackout ###
 
