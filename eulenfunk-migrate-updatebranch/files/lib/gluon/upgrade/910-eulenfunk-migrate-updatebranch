@@ -3,10 +3,10 @@
 UPDATE_BRANCH=$(uci get autoupdater.settings.branch)
 GLUON_SITECODE=$(lua /lib/gluon/eulenfunk-migrate-updatebranch/sitecode.lua)
 
-# shifting from beta/experimental/broken back to stable systematically
+# shifting remaining gluon2021.x (32MB RAM/4MB Flash devices) from stable/beta/experimental/broken back to sackgasse systematically
 
-if [ "$UPDATE_BRANCH" = "experimental" ] || [ "$UPDATE_BRANCH" = "broken" ] || [ "$UPDATE_BRANCH" = "experimentall2tp" ] || [ "$UPDATE_BRANCH" = "stablel2tp" ] || [ "$UPDATE_BRANCH" = "beta" ]; then
-  uci set autoupdater.settings.branch='stable'
+if [ "$UPDATE_BRANCH" = "experimental" ] || [ "$UPDATE_BRANCH" = "broken" ] || [ "$UPDATE_BRANCH" = "experimentall2tp" ] || [ "$UPDATE_BRANCH" = "stablel2tp" ] || [ "$UPDATE_BRANCH" = "beta" ] || [ "$UPDATE_BRANCH" = "stable" ]; then
+  uci set autoupdater.settings.branch='sackgasse'
  fi
 
 # drop outdated update branches
