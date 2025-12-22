@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=eulenfunk-mt7915-hotfix
+PKG_NAME:=eulenfunk-mt7915-backlog
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
