@@ -17,6 +17,7 @@ if site.ssid_changer ~= nil then
 		tq_limit_enabled  = site.ssid_changer.tq_limit_enabled() or false,
 		tq_limit_max      = site.ssid_changer.tq_limit_max() or 45,
 		tq_limit_min      = site.ssid_changer.tq_limit_min() or 35,
+		gwofflinemaxcount = uci:get('ssid-changer', 'settings', 'gwofflinemaxcount') or 3,
 	})
 	uci:save('ssid-changer')
 end

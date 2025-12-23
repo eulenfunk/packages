@@ -92,11 +92,14 @@ local offline_ssid = calculate_offline_ssid()
 -- Count offline incidents
 local tmp = '/tmp/ssid-changer-count'
 local tmp_state = '/tmp/ssid-changer-offline'
+local tmp_gwoffstate = '/tmp/ssid-changer-gwofflinecount'
+local gwoffmaxcount = tonumber(uci:get('ssid-changer', 'settings', 'gwofflinemaxcount') or 3)
 local off_count = 0
 local file = io.open(tmp, 'r')
 
 local is_offline = 0
 local state_file = io.open(tmp_state, 'r')
+local gwoffstate_file = io.open(tmp_gwoffstate, 'r')
 
 if state_file then
 	is_offline = tonumber(state_file:read("*a")) or 0
@@ -115,6 +118,14 @@ else
 	file:write("0")
 	file:close()
 end
+
+if gwoffstate_file then
+	gwoffcount = tonumber(gwoffstate_file:read("*a")) or 0
+	gwoffstate_file:close()
+else
+	gwoffstate_file = io.open(tmp_gwoffstate, 'w')
+	gwoffstate_file:write("0")
+	gwoffstate_file:close()
 
 local function calculate_tq_limit()
 	local tq_limit_max = tonumber(uci:get('ssid-changer', 'settings', 'tq_limit_max') or 45)
@@ -158,6 +169,10 @@ end
 
 local status
 if has_default_gw4() then
+	gwoffstate_file = io.open(tmp_gwoffstate, 'w')
+	gwoffstate_file:write("0")
+	gwoffstate_file:close()
+
 	local tq_limit_enabled = tonumber(uci:get('ssid-changer', 'settings', 'tq_limit_enabled') or 0)
 
 	if tq_limit_enabled == 1 then
@@ -166,7 +181,15 @@ if has_default_gw4() then
 		status = 'online'
 	end
 else
-	status = 'offline'
+	if gwoffcount >= gwoffmaxcount then
+		status = 'offline'
+	else
+		gwoffcount = gwoffcount + 1
+		gwoffstate_file = io.open(tmp_gwoffstate, 'w')
+		gwoffstate_file:write(tostring(gwoffcount))
+		gwoffstate_file:close()
+		status = 'online'
+	end
 end
 
 if status == 'online' then

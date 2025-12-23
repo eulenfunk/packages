@@ -8,3 +8,4 @@ if need_boolean({'ssid_changer','tq_limit_enabled'}, false) then
 	need_number({'ssid_changer', 'tq_limit_max'}, false)
 	need_number({'ssid_changer', 'tq_limit_min'}, false)
 end
+need_number({'ssid_changer', 'gwofflinemaxcount'}, false)
