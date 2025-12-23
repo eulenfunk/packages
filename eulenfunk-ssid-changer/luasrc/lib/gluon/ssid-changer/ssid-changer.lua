@@ -126,6 +126,7 @@ else
 	gwoffstate_file = io.open(tmp_gwoffstate, 'w')
 	gwoffstate_file:write("0")
 	gwoffstate_file:close()
+end
 
 local function calculate_tq_limit()
 	local tq_limit_max = tonumber(uci:get('ssid-changer', 'settings', 'tq_limit_max') or 45)
