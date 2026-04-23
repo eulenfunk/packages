@@ -3,7 +3,6 @@ valuecheck ()
 # this checks for multiple problems on the same IF, tries to resolve, or reboots as last resort
 {
   logstring=$logstring" "$linkname"."$check":"$wert
-#  echo $logstring
   if [ ! -f /tmp/linkcheck.$linkname.$check.inhood ] ; then
     if [ "$wert" -gt 1 ] ; then #minimum 2 neighbors
       echo $(date)>/tmp/linkcheck.$linkname.$check.inhood
@@ -145,17 +144,15 @@ if [ "$gluontarget" != "mediatek" ]; then
     valuecheck $check
    done
   # check if all previously seen ifs if there are batman nodes behind in any routing path whatsoever
-  batneighbors=$(batctl o|tail -n +3)
+  batctl o|tail -n +3>/tmp/batman.originatorslist
   for batups in $batupfiles; do
     batifupf=$(echo $batups|cut -d. -f2)
     echo check if by file: $batifupf # individually previsously seen file
-    batnbs=$(batctl o |tail -n +3|grep $batifupf|wc -l)
-    echo on $batifupf are $batnbs
-    wert=$batnbs
-    linkname=batman-originators
+    bators=$(cat /tmp/batman.originatorslist|tail -n +3|grep $batifupf|wc -l)
+#    echo on $batifupf are $bators
+    wert=$bators
+    linkname=batman.originators
     check=$batifupf
     valuecheck $check
    done
-
- 
 logger -s -t "eulenfunk-linkcheck" -p 5 $logstring
