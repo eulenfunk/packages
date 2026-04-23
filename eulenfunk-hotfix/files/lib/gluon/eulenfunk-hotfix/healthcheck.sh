@@ -47,7 +47,7 @@ if [ -f /tmp/autoupdate.lock ] ; then
   MAXAGE=$(($(date +%s)-60*${UPDATEWAIT}))
   LOCKAGE=$(date -r /tmp/autoupdate.lock +%s)
   if [ "$MAXAGE" -gt "$LOCKAGE" ] ; then
-    now_reboot "stale autoupdate.lock file" -f
+    now_reboot "stale autoupdate.lock file" 
   fi
   safety_exit "autoupdate running"
 fi
@@ -100,18 +100,18 @@ iw_dev_reboot_freeze() {
   # first parameter defines the time to wait
   # calls `iw` with the rest of the arguments given to the function
   local t=$1 ; shift
-  iw dev $@ &
+  iw dev $2 scan lowpri passive&
   # get the bg process
   local p=$!
   sleep $t
   # kill -0 does nothing, but returns true if the process exists
-  kill -0 $p 2>/dev/null && now_reboot "'iw dev $@ freezes for more than $t s'"
+  kill -0 $p 2>/dev/null && now_reboot "'iw dev $2 freezes for more than $t s'"
 }
 
 scan() {
   # call iw $dev scan to repair defunc wifi
   logger -s -t "eulenfunk-healthcheck" -p 5 "neighbour lost, running iw scan"
-  iw_dev_reboot_freeze 30 $1 scan lowpri passive>/dev/null
+  iw_dev_reboot_freeze 60 $1 >/dev/null
 }
 
 # check all radios for lost neighbours
