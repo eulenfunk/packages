@@ -1,4 +1,4 @@
-gluon lan and wifi neighbour check
+eulenfunk lan and wifi neighbour check
 ==================================
 
 this script looks for wifi and lan mesh neighbours. 
@@ -36,7 +36,7 @@ PACKAGES_EULENFUNK_REPO=https://github.com/eulenfunk/packages.git<br>
 PACKAGES_EULENFUNK_COMMIT=*/missing/*<br>
 PACKAGES_EULENFUNK_BRANCH=chaos-calmer<br>
 
-With this done you can add the package *gluon-linkcheck* to your site.mk
+With this done you can add the package *eulenfunk-linkcheck* to your site.mk/image-customization.lua
 
 This branch of the script contains the linkcheck version for the current openwrt chaos-calmer (gluon 2016.1.x), but should work with 2015.1.x as well. (untested)
 Beware: this relies on IBSS/adhoc mode, not compatible with 802.11s-mesh yet.

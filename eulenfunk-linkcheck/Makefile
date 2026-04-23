@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gluon-linkcheck
+PKG_NAME:=eulenfunk-linkcheck
 PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
@@ -10,7 +10,7 @@ include $(TOPDIR)/../package/gluon.mk
 define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=WIFI-Neighborcheck
+  TITLE:=WIFI and batman Neighborcheck
   DEPENDS:=+gluon-core +micrond
 endef
 
