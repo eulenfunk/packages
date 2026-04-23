@@ -113,7 +113,7 @@ if [ "$gluontarget" != "mediatek" ]; then
 # check for disappearing batman-interfaces
 
   # inventory of bat-interfaces, from all possible sources, probably unneccesary
-  batinterfaces2=$(batctl n|tail -n -3|awk '{print $1}'|sort|uniq)
+  batinterfaces2=$(batctl n|tail -n +3|awk '{print $1}'|sort|uniq)
   batinterfaces1=$(batctl if|cut -d: -f1|sort|uniq)
   batinterfaces3=$(echo "$batinterfaces1 $batinterfaces2")
   batinterfaces=$(for l in $batinterfaces3; do echo $l; done|sort|uniq)
@@ -148,7 +148,7 @@ if [ "$gluontarget" != "mediatek" ]; then
   for batups in $batupfiles; do
     batifupf=$(echo $batups|cut -d. -f2)
     echo check if by file: $batifupf # individually previsously seen file
-    bators=$(cat /tmp/batman.originatorslist|tail -n +3|grep $batifupf|wc -l)
+    bators=$(cat /tmp/batman.originatorslist|grep $batifupf|wc -l)
 #    echo on $batifupf are $bators
     wert=$bators
     linkname=batman.originators
