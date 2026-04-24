@@ -9,7 +9,6 @@ valuecheck ()
      fi
    else # .inhood file present
     if [ "$wert" -lt 1 ] ; then # link disappeared!
-      echo ALAAAAM!
       if [ -f /tmp/linkcheck.$linkname.$check.linkpb1 ] ; then
         if [ -f /tmp/linkcheck.$linkname.$check.linkpb2 ] ; then
           if [ -f /tmp/linkcheck.$linkname.$check.linkpb3 ] ; then
@@ -53,7 +52,7 @@ valuecheck ()
 upgrade_started='/tmp/autoupdate.lock'
 [ -f $upgrade_started ] && exit
 
-# running over existing batman-interface, looking for direct neighbors
+# 1) running over existing batman-interface, looking for direct neighbors
 batversion=$(batctl -v |cut -d" " -f 2|grep -o '[0-9]\+'| tr -d '\012\015')
 linkname=batadv
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
@@ -68,7 +67,7 @@ for batm in $batmeshs; do
   valuecheck $check
 done
 
-# running over wifimesh-interfaces, looking for other SSIDs on the same wifi via iwscan lowpri
+# 2) running over wifimesh-interfaces, looking for other SSIDs on the same wifi via iwscan lowpri
 
 # do not run on mediatek (filogic...) devices, since it seems to break meshlinks. 
 gluontarget=$(cat /etc/openwrt_release|grep DISTRIB_TARGET|cut -d"=" -f2|tr -d \'|cut -d/ -f1)
@@ -109,7 +108,7 @@ if [ "$gluontarget" != "mediatek" ]; then
    done
  fi
 
-# check for disappearing batman-interfaces
+# 3) check for disappearing batman-interfaces
   wirebatlinks="mesh-vpn primary0 br-mesh_other br-mesh_lan br-mesh_wan br-wan br-lan br-mesh_other1 br-mesh_other2 br-mesh_other3 br-mesh_other4 br-mesh_other5"
   wifibatlinks="mesh0 mesh1 mesh2 mesh3"
 
@@ -156,4 +155,38 @@ if [ "$gluontarget" != "mediatek" ]; then
     check=$batifupf
     valuecheck $check
    done
+
+## 4) check for disappearing bridge interfaces
+#
+##!/bin/sh
+## get current bridges 
+#  bridgeslist=$(brctl show |cut -f1|sort -u|sed '/^\s*$/d'|grep -v "bridge name")
+#  # create flag files in /tmp
+#  for bridgename in $bridgeslist; do
+#    echo $(date)>/tmp/linkcheck.bridge.$bridgename.up
+#    interfaces=$(brctl show $bridgename|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
+#    for interface in $interfaces; do
+#      echo $(date)>/tmp/linkcheck.bridge.$bridgename.if.$interface.up
+#     done
+#   done
+#  # get all previously seen bridges by flag files
+#  for upbrige in "/tmp/linkcheck.bridge.*.up"; do
+#    echo file $upbridge
+#   done
+##  # check if all prviously seen are in current list
+##  for batups in $batupfiles; do
+##    batifupf=$(echo $batups|cut -d. -f2)
+##    echo check if by file: $batifupf # individually previsously seen file
+##    if [[ "$batinterfaces" =~ "$batifupf" ]]; then
+##      wert=2
+##     else
+##      wert=0
+##     fi
+##    linkname=batinterfaces
+##    check=$batifupf
+##    valuecheck $check
+##   done
+
+
+
 logger -s -t "eulenfunk-linkcheck" -p 5 $logstring
