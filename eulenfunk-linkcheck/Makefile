@@ -26,7 +26,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
-	./gluonShellDiet.sh $(1)/lib/gluon/linkcheck/linkcheck.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-linkcheck/linkcheck.sh
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

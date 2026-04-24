@@ -38,5 +38,3 @@ PACKAGES_EULENFUNK_BRANCH=chaos-calmer<br>
 
 With this done you can add the package *eulenfunk-linkcheck* to your site.mk/image-customization.lua
 
-This branch of the script contains the linkcheck version for the current openwrt chaos-calmer (gluon 2016.1.x), but should work with 2015.1.x as well. (untested)
-Beware: this relies on IBSS/adhoc mode, not compatible with 802.11s-mesh yet.
