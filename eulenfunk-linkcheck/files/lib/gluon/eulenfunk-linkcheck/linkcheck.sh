@@ -134,6 +134,7 @@ if [ "$gluontarget" != "mediatek" ]; then
       wert=2
      else
       wert=0
+      logger -s -t "eulenfunk-linkcheck" -p 5 batman interface $batifupf gone missing
      fi
     linkname=batinterfaces
     check=$batifupf
@@ -148,7 +149,7 @@ if [ "$gluontarget" != "mediatek" ]; then
     if [[ ! "$wifibatlinks" =~ "$batifupf" ]]; then    # do not check for wifimesh links as check/reboot condition!
       echo check if by file: $batifupf # individually previsously seen file
       bators=$(cat $batmanoriginatorsfile|grep $batifupf|wc -l)
-      echo on batif $batifupf are $bators originators
+      logger -s -t "eulenfunk-linkcheck" -p 5 on bat interface $batifupf there are $bators originators
       wert=$bators
       linkname=batman.originators
       check=$batifupf
@@ -181,10 +182,10 @@ if [ "$gluontarget" != "mediatek" ]; then
     echo check if by file: $upbridge # individually previsously seen file
     if [[ "$bridgeslist" =~ "$upbridge"   ]]; then
        wert=2
-       echo $upbridge is golden
+#       echo $upbridge is golden
       else
        wert=0
-       echo $upbridge gone missing
+       logger -s -t "eulenfunk-linkcheck" -p 5 bridge $upbridge gone missing
       fi
      linkname=bridgeinterfaces
      check=$upbridge
@@ -200,10 +201,10 @@ if [ "$gluontarget" != "mediatek" ]; then
        echo $interfaces
        if [[ "$interfaces" =~ "$interfaced" ]]; then
          wert=2
-         echo $upbridge:$interfaced is golden
+#         echo $upbridge:$interfaced is golden
         else
          wert=0
-         echo $upbridge:$interfaced gone missing
+         logger -s -t "eulenfunk-linkcheck" -p 5 bridge-member $upbridge:interfaced gone missing
         fi
         linkname=bridgeinterfaceports
         check=$upbridge:$interfaced
