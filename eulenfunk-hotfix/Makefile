@@ -27,7 +27,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/rebootIfNoGw.sh 
-	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/rebootIfNoGw.sh
+	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/IfNoWificlient.sh
 	./gluonShellDiet.sh $(1)/lib/gluon/eulenfunk-hotfix/healthcheck.sh
 endef
 
