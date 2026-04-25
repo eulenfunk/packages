@@ -149,7 +149,7 @@ if [ "$gluontarget" != "mediatek" ]; then
     if [[ ! "$wifibatlinks" =~ "$batifupf" ]]; then    # do not check for wifimesh links as check/reboot condition!
       echo check if by file: $batifupf # individually previsously seen file
       bators=$(cat $batmanoriginatorsfile|grep $batifupf|wc -l)
-      logger -s -t "eulenfunk-linkcheck" -p 5 on bat interface $batifupf there are $bators originators
+      logger -s -t "eulenfunk-linkcheck" -p 5 on bat if $batifupf : $bators originators
       wert=$bators
       linkname=batman.originators
       check=$batifupf
@@ -175,7 +175,7 @@ if [ "$gluontarget" != "mediatek" ]; then
     :
 #    echo file # $upbridgesf
    done
-  echo upbridgesf $upbridgesf
+#  echo upbridgesf $upbridgesf
   # check if all prviously seen are in current list
   for upbridgef in $upbridgesf; do
     upbridge=$(echo $upbridgef|cut -d. -f3)
@@ -193,10 +193,10 @@ if [ "$gluontarget" != "mediatek" ]; then
      for interfacesf in "/tmp/linkcheck.bridgeif.$upbridge.if.*.up"; do
        :
       done
-     echo file  $interfacesf
+#     echo file  $interfacesf
      for interfacef in $interfacesf; do
        interfaced=$(echo $interfacef|cut -d. -f5)
-       echo testing $upbridge:$interfaced
+#       echo testing $upbridge:$interfaced
        interfaces=$(brctl show $upbridge|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
        echo $interfaces
        if [[ "$interfaces" =~ "$interfaced" ]]; then
