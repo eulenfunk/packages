@@ -198,7 +198,7 @@ if [ "$gluontarget" != "mediatek" ]; then
        interfaced=$(echo $interfacef|cut -d. -f5)
 #       echo testing $upbridge:$interfaced
        interfaces=$(brctl show $upbridge|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
-       echo $interfaces
+#       echo $interfaces
        if [[ "$interfaces" =~ "$interfaced" ]]; then
          wert=2
 #         echo $upbridge:$interfaced is golden
