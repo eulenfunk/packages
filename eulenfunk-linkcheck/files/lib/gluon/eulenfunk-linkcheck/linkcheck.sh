@@ -206,8 +206,8 @@ if [ "$gluontarget" != "mediatek" ]; then
          echo $upbridge:$interfaced gone missing
         fi
         linkname=bridgeinterfaceports
-        check=$upbridge
+        check=$upbridge:$interfaced
         valuecheck $check
       done
    done
-
+logger -s -t "eulenfunk-linkcheck" -p 5 $logstring
