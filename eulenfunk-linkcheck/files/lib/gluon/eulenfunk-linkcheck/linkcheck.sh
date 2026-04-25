@@ -166,7 +166,7 @@ if [ "$gluontarget" != "mediatek" ]; then
     echo $(date)>/tmp/linkcheck.bridge.$bridgename.up
     interfaces=$(brctl show $bridgename|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
     for interface in $interfaces; do
-      echo $(date)>/tmp/linkcheck.bridgeif.$bridgename.if.$interface.up
+      echo $(date)>/tmp/linkcheck.bridgeif.$bridgename.if§$interface§up
      done
    done
 
@@ -190,12 +190,12 @@ if [ "$gluontarget" != "mediatek" ]; then
      linkname=bridgeinterfaces
      check=$upbridge
      valuecheck $check
-     for interfacesf in "/tmp/linkcheck.bridgeif.$upbridge.if.*.up"; do
+     for interfacesf in "/tmp/linkcheck.bridgeif.$upbridge.if§*§up"; do
        :
       done
 #     echo file  $interfacesf
      for interfacef in $interfacesf; do
-       interfaced=$(echo $interfacef|cut -d. -f5)
+       interfaced=$(echo $interfacef|cut -d§ -f2)
 #       echo testing $upbridge:$interfaced
        interfaces=$(brctl show $upbridge|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
 #       echo $interfaces
