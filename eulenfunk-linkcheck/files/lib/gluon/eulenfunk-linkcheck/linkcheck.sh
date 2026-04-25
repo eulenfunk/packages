@@ -17,7 +17,7 @@ valuecheck ()
             upgrade_started='/tmp/autoupdate.lock'
             [ -f $upgrade_started ] && exit
             reboot -f
-           fi 
+           fi
           # 3nd time failure
           logger -s -t "eulenfunk-linkcheck" -p 5 "lost neighbors 3rd: $linkname.$check, wifi restart"
           echo $(date)>/tmp/linkcheck.$linkname.$check.linkpb3
@@ -27,7 +27,7 @@ valuecheck ()
           wifi config
           wifi up
           sleep 15
-        fi
+         fi
         logger -s -t "eulenfunk-linkcheck" -p 5 "lost neighbours 2nd:$linkname.$check"
         echo $(date)>/tmp/linkcheck.$linkname.$check.linkpb2
        else #linkpb1 existiert noch nicht, anlegen!
@@ -69,7 +69,7 @@ done
 
 # 2) running over wifimesh-interfaces, looking for other SSIDs on the same wifi via iwscan lowpri
 
-# do not run on mediatek (filogic...) devices, since it seems to break meshlinks. 
+# do not run on mediatek (filogic...) devices, since it seems to break meshlinks.
 gluontarget=$(cat /etc/openwrt_release|grep DISTRIB_TARGET|cut -d"=" -f2|tr -d \'|cut -d/ -f1)
 if [ "$gluontarget" != "mediatek" ]; then
   checks=""
@@ -81,8 +81,8 @@ if [ "$gluontarget" != "mediatek" ]; then
       linksexist="$linksexist $link"
      fi
   done
-  # alte scans wegräumen
-  rm /tmp/linkcheck.iwscan.* 2>/dev/null 
+  # alte scans wegr??umen
+  rm /tmp/linkcheck.iwscan.* 2>/dev/null
   for linkexist in $linksexist; do
     linkname=$(uci get $linkexist.ifname)
     iwfile=/tmp/linkcheck.iwscan.$(uci get $linkexist.device)
@@ -123,15 +123,13 @@ if [ "$gluontarget" != "mediatek" ]; then
   for batinterface in $batinterfaces; do
     echo $(date)>/tmp/linkcheck.batinterface.$batinterface.up
    done
-
   # get all previously seen interfaces by flag files
   for batupfiles in "/tmp/linkcheck.batinterface.*.up"; do
-    echo file $batupfiles
+    :
    done
   # check if all prviously seen are in current list
   for batups in $batupfiles; do
-    batifupf=$(echo $batups|cut -d. -f2)
-    echo check if by file: $batifupf # individually previsously seen file
+    batifupf=$(echo $batups|cut -d. -f3)
     if [[ "$batinterfaces" =~ "$batifupf" ]]; then
       wert=2
      else
@@ -141,52 +139,75 @@ if [ "$gluontarget" != "mediatek" ]; then
     check=$batifupf
     valuecheck $check
    done
-  # check if all previously seen interface, are there batman (inhood-file) and did they disappear later? 
+
+  # check if all previously seen interface, are there batman (inhood-file) and did they disappear later?
   batmanoriginatorsfile="/tmp/linkcheck.batmanoriginators.list"
   batctl o|tail -n +3>$batmanoriginatorsfile
   for batups in $batupfiles; do
-    batifupf=$(echo $batups|cut -d. -f2)
-    if [[ ! "$wifibatlinks" =~ "$batifupf" ]]    # do not check for wifimesh links as check/reboot condition!
-    echo check if by file: $batifupf # individually previsously seen file
-    bators=$(cat $batmanoriginatorsfile|grep $batifupf|wc -l)
-#    echo on $batifupf are $bators
-    wert=$bators
-    linkname=batman.originators
-    check=$batifupf
-    valuecheck $check
+    batifupf=$(echo $batups|cut -d. -f3)
+    if [[ ! "$wifibatlinks" =~ "$batifupf" ]]; then    # do not check for wifimesh links as check/reboot condition!
+      echo check if by file: $batifupf # individually previsously seen file
+      bators=$(cat $batmanoriginatorsfile|grep $batifupf|wc -l)
+      echo on batif $batifupf are $bators originators
+      wert=$bators
+      linkname=batman.originators
+      check=$batifupf
+      valuecheck $check
+     fi
    done
 
 ## 4) check for disappearing bridge interfaces
 #
-##!/bin/sh
-## get current bridges 
-#  bridgeslist=$(brctl show |cut -f1|sort -u|sed '/^\s*$/d'|grep -v "bridge name")
-#  # create flag files in /tmp
-#  for bridgename in $bridgeslist; do
-#    echo $(date)>/tmp/linkcheck.bridge.$bridgename.up
-#    interfaces=$(brctl show $bridgename|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
-#    for interface in $interfaces; do
-#      echo $(date)>/tmp/linkcheck.bridge.$bridgename.if.$interface.up
-#     done
-#   done
-#  # get all previously seen bridges by flag files
-#  for upbrige in "/tmp/linkcheck.bridge.*.up"; do
-#    echo file $upbridge
-#   done
-##  # check if all prviously seen are in current list
-##  for batups in $batupfiles; do
-##    batifupf=$(echo $batups|cut -d. -f2)
-##    echo check if by file: $batifupf # individually previsously seen file
-##    if [[ "$batinterfaces" =~ "$batifupf" ]]; then
-##      wert=2
-##     else
-##      wert=0
-##     fi
-##    linkname=batinterfaces
-##    check=$batifupf
-##    valuecheck $check
-##   done
+# get current bridges
+  bridgeslist=$(brctl show |cut -f1|sort -u|sed '/^\s*$/d'|grep -v "bridge name")
+  # create flag files in /tmp
+  for bridgename in $bridgeslist; do
+    echo $(date)>/tmp/linkcheck.bridge.$bridgename.up
+    interfaces=$(brctl show $bridgename|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
+    for interface in $interfaces; do
+      echo $(date)>/tmp/linkcheck.bridgeif.$bridgename.if.$interface.up
+     done
+   done
 
+  # get all previously seen bridges by flag files
+  for upbridgesf in "/tmp/linkcheck.bridge.*.up"; do
+    :
+#    echo file # $upbridgesf
+   done
+  echo upbridgesf $upbridgesf
+  # check if all prviously seen are in current list
+  for upbridgef in $upbridgesf; do
+    upbridge=$(echo $upbridgef|cut -d. -f3)
+    echo check if by file: $upbridge # individually previsously seen file
+    if [[ "$bridgeslist" =~ "$upbridge"   ]]; then
+       wert=2
+       echo $upbridge is golden
+      else
+       wert=0
+       echo $upbridge gone missing
+      fi
+     linkname=bridgeinterfaces
+     check=$upbridge
+     valuecheck $check
+     for interfacesf in "/tmp/linkcheck.bridgeif.$upbridge.if.*.up"; do
+       :
+      done
+     echo file  $interfacesf
+     for interfacef in $interfacesf; do
+       interfaced=$(echo $interfacef|cut -d. -f5)
+       echo testing $upbridge:$interfaced
+       interfaces=$(brctl show $upbridge|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
+       echo $interfaces
+       if [[ "$interfaces" =~ "$interfaced" ]]; then
+         wert=2
+         echo $upbridge:$interfaced is golden
+        else
+         wert=0
+         echo $upbridge:$interfaced gone missing
+        fi
+        linkname=bridgeinterfaceports
+        check=$upbridge
+        valuecheck $check
+      done
+   done
 
-
-logger -s -t "eulenfunk-linkcheck" -p 5 $logstring
