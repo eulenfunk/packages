@@ -14,7 +14,7 @@ now_reboot() {
   # second optional -f to force reboot even if autoupdater is running
   logger -s -t "eulenfunk-healthcheck" -p 5 "rebooting... reason: $1"
   if [ "$(sed 's/\..*//g' /proc/uptime)" -gt "3600" ] ; then
-    LOG=/lib/gluon/healthcheck
+    LOG=/lib/gluon/eulenfunk-hotfix
     [ ! -d $LOG ] && mkdir $LOG
     LOG="$LOG/reboot.log"
     # the first 5 times log the reason for a reboot in a file that is rebootsave
