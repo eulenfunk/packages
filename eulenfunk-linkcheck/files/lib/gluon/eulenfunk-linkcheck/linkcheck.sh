@@ -4,11 +4,11 @@ valuecheck ()
 {
   logstring=${logstring}" "${linkname}"."${check}":"${wert}
   if [ ! -f /tmp/linkcheck.${linkname}.${check}.inhood ] ; then
-    if [ "${wert}" -gt 1 ] ; then #minimum 2 neighbors
+    if [ "${wert}" -gt "1" ] ; then #minimum 2 neighbors
       echo $(date)>/tmp/linkcheck.${linkname}.${check}.inhood
      fi
    else # .inhood file present
-    if [ "${wert}" -lt 1 ] ; then # link disappeared!
+    if [ "${wert}" -lt "1" ] ; then # link disappeared!
       if [ -f /tmp/linkcheck.${linkname}.${check}.linkpb1 ] ; then
         if [ -f /tmp/linkcheck.${linkname}.${check}.linkpb2 ] ; then
           if [ -f /tmp/linkcheck.${linkname}.${check}.linkpb3 ] ; then
@@ -58,9 +58,9 @@ linkname='batadv'
 batmeshs=$(batctl if|cut -d":" -f 1|tr '\n' ' ')
 for batm in ${batmeshs}; do
   if [ $batversion -gt 20163 ] ; then
-   result=$(batctl -n|grep ${batm}|awk '{print $2}'|sort|uniq|wc -l)
-  else
    result=$(batctl n|grep ${batm}|awk '{print $2}'|sort|uniq|wc -l)
+  else
+   result=$(batctl -n|grep ${batm}|awk '{print $2}'|sort|uniq|wc -l)
   fi
   check=${batm}
   wert=$result
@@ -116,11 +116,11 @@ if [ "$gluontarget" != "mediatek" ]; then
   batinterfaces2=$(batctl n|tail -n +3|awk '{print $1}'|sort|uniq)
   batinterfaces1=$(batctl if|cut -d: -f1|sort|uniq)
   batinterfaces3=$(echo "${batinterfaces1} ${batinterfaces2}")
-  batinterfaces=$(for b in {$batinterfaces3}; do echo ${b}; done|sort|uniq)
+  batinterfaces=$(for b in ${batinterfaces3}; do echo ${b}; done|sort|uniq)
 #  echo batinterfaces $batinterfaces
 
   # create flag files in /tmp
-  for batinterface in $batinterfaces; do
+  for batinterface in ${batinterfaces}; do
     echo $(date)>/tmp/linkcheck.batinterface.${batinterface}.up
    done
   # get all previously seen interfaces by flag files
@@ -159,26 +159,27 @@ if [ "$gluontarget" != "mediatek" ]; then
 
 ## 4) check for disappearing bridge interfaces
 #
+  ifnameseparator='+'
 # get current bridges
   bridgeslist=$(brctl show |cut -f1|sort -u|sed '/^\s*$/d'|grep -v "bridge name")
   # create flag files in /tmp
   for bridgename in ${bridgeslist}; do
-    echo $(date)>/tmp/linkcheck.bridge.${bridgename}.up
+    echo $(date)>/tmp/linkcheck.bridge${ifnameseparator}${bridgename}${ifnameseparator}up
     interfaces=$(brctl show ${bridgename}|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
     for interface in ${interfaces}; do
-      echo $(date)>/tmp/linkcheck.bridgeif.${bridgename}.if+${interface}+up
+      echo $(date)>/tmp/linkcheck.bridgeif${ifnameseparator}${bridgename}${ifnameseparator}if${ifnameseparator}${interface}${ifnameseparator}up
      done
    done
 
   # get all previously seen bridges by flag files
-  for upbridgesf in "/tmp/linkcheck.bridge.*.up"; do
+  for upbridgesf in "/tmp/linkcheck.bridge${ifnameseparator}*${ifnameseparator}up"; do
     :
 #    echo file # $upbridgesf
    done
 #  echo upbridgesf ${upbridgesf}
   # check if all prviously seen are in current list
   for upbridgef in ${upbridgesf}; do
-    upbridge=$(echo ${upbridgef}|cut -d. -f3)
+    upbridge=$(echo ${upbridgef}|cut -d${ifnameseparator} -f2)
     echo check if by file: ${upbridge} # individually previsously seen file
     if [[ "${bridgeslist}" =~ "${upbridge}"   ]]; then
        wert='2'
@@ -190,12 +191,12 @@ if [ "$gluontarget" != "mediatek" ]; then
      linkname=bridgeinterfaces
      check=${upbridge}
      valuecheck ${check}
-     for interfacesf in "/tmp/linkcheck.bridgeif.${upbridge}.if+*+up"; do
+     for interfacesf in "/tmp/linkcheck.bridgeif${ifnameseparator}${upbridge}${ifnameseparator}if${ifnameseparator}*${ifnameseparator}up"; do
        :
       done
 #     echo file  ${interfacesf}
      for interfacef in ${interfacesf}; do
-       interfaced=$(echo ${interfacef}|cut -d+ -f2)
+       interfaced=$(echo ${interfacef}|cut -d${ifnameseparator} -f4)
 #       echo testing ${upbridge}:${interfaced}
        interfaces=$(brctl show ${upbridge}|sed -e 's/\t/                     /g'|cut -c 100-|sed -e 's/ //g'|tail -n +2)
 #       echo ${interfaces}
